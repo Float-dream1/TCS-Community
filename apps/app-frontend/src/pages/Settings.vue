@@ -13,6 +13,7 @@ import { platform as getOsPlatform, version as getOsVersion } from '@tauri-apps/
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
+import tacraftIcon from '@/assets/branding/tacraft.png'
 import {
     getVisibleSettingsCategories,
     getVisibleSettingsGroups,
@@ -542,7 +543,7 @@ const pageTitle: MessageDescriptor = settingsPageTitle
                             "
                             @click="toggleDeveloperMode"
                         >
-                            <img class="size-8 object-contain" src="@/assets/axolotl.png" alt="" />
+                            <img class="size-8 object-contain" :src="tacraftIcon" alt="" />
                         </button>
                         <div class="settings-footer-version min-w-0">
                             <p class="m-0 break-words">

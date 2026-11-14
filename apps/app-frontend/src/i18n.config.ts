@@ -66,10 +66,7 @@ export function resolveInitialLocale(preferredLocales: readonly string[]): strin
         if (availableLocales.includes(normalizedLocale)) return normalizedLocale
 
         const language = normalizedLocale.split('-')[0].toLowerCase()
-        if (language === 'zh') {
-            const traditionalChinese = /-(tw|hk|mo)|-hant/i.test(normalizedLocale)
-            return traditionalChinese ? 'zh-TW' : 'zh-CN'
-        }
+        if (language === 'zh') return 'zh-CN'
 
         const languageMatch = availableLocales.find((locale) =>
             locale.toLowerCase().startsWith(`${language}-`),

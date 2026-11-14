@@ -26,7 +26,7 @@ use windows::Win32::{
 };
 
 type Result<T> = std::result::Result<T, String>;
-const MAIN: &str = "Axolotl Launcher.exe";
+const MAIN: &str = "TaCraft Player Community.exe";
 const HELPER: &str = "axolotl-updater.exe";
 const MARKER: &str = ".axolotl-portable-update.json";
 const PREFIX: &str = ".axolotl-update-";
@@ -710,7 +710,10 @@ mod tests {
         let mut zip = zip::ZipWriter::new(Cursor::new(Vec::new()));
         let executable = pe(2);
         for (name, bytes) in [
-            ("Axolotl/Axolotl Launcher.exe", executable.as_slice()),
+            (
+                "Axolotl/TaCraft Player Community.exe",
+                executable.as_slice(),
+            ),
             ("Axolotl/axolotl-updater.exe", executable.as_slice()),
             (
                 "Axolotl/resources/blockbench-skin/index.html",
@@ -818,7 +821,7 @@ mod tests {
         assert!(prepare(&bytes, root.path().join(MAIN)).is_err());
         let mut zip = zip::ZipWriter::new(Cursor::new(Vec::new()));
         zip.start_file(
-            "Axolotl/Axolotl Launcher.exe",
+            "Axolotl/TaCraft Player Community.exe",
             SimpleFileOptions::default(),
         )
         .unwrap();

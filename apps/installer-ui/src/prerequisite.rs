@@ -68,7 +68,7 @@ fn copy(chinese: bool) -> Copy {
         Copy {
             face: "Microsoft YaHei UI",
             title: "需要安装 WebView2 Runtime",
-            message: "未检测到 Microsoft Edge WebView2 Runtime。Axolotl Launcher 及其安装界面需要此组件。\r\n\r\n请前往微软官网下载并安装 Evergreen WebView2 Runtime，然后重新运行本安装程序。",
+            message: "未检测到 Microsoft Edge WebView2 Runtime。TaCraft Player Community 及其安装界面需要此组件。\r\n\r\n请前往微软官网下载并安装 Evergreen WebView2 Runtime，然后重新运行本安装程序。",
             download: "前往下载",
             cancel: "取消",
         }
@@ -76,7 +76,7 @@ fn copy(chinese: bool) -> Copy {
         Copy {
             face: "Segoe UI",
             title: "WebView2 Runtime is required",
-            message: "Microsoft Edge WebView2 Runtime was not found. Axolotl Launcher and its installer require this component.\r\n\r\nDownload and install the Evergreen WebView2 Runtime from Microsoft, then run this installer again.",
+            message: "Microsoft Edge WebView2 Runtime was not found. TaCraft Player Community and its installer require this component.\r\n\r\nDownload and install the Evergreen WebView2 Runtime from Microsoft, then run this installer again.",
             download: "Go to download",
             cancel: "Cancel",
         }
@@ -311,7 +311,7 @@ fn initialize_dialog(window: HWND, state: &DialogState) -> Result<()> {
     let dpi = unsafe { GetDpiForWindow(window) }.max(96);
     *state.appearance.borrow_mut() =
         Some(Appearance::new(dpi, state.copy.face)?);
-    set_text(window, "Axolotl Launcher")?;
+    set_text(window, "TaCraft Player Community")?;
     set_text(unsafe { GetDlgItem(Some(window), 1002) }?, state.copy.title)?;
     set_text(
         unsafe { GetDlgItem(Some(window), 1003) }?,

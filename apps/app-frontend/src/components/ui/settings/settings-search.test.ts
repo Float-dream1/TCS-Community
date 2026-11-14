@@ -22,7 +22,6 @@ const settingsComponentFiles = {
     interface: ['./AppearanceSettings.vue'],
     'home-navigation': ['./AppearanceSettings.vue'],
     'language-translation': ['./LanguageSettings.vue', './TranslationSettings.vue'],
-    ai: ['./AISettings.vue'],
     mcp: ['./McpSettings.vue'],
     'shortcut-settings': ['./KeybindSettings.vue'],
     'java-performance': ['./JavaSettings.vue'],
@@ -39,10 +38,7 @@ const settingsComponentFiles = {
         './StorageBackupSettings.vue',
         './StorageSettings.vue',
     ],
-    'privacy-data': ['./PrivacySettings.vue'],
-    'third-party-accounts': ['./ThirdPartyAccountsSettings.vue'],
     'instance-sync': ['./instances/index.vue'],
-    updates: ['./UpdateSettings.vue'],
     logs: ['./LogsSettings.vue'],
     about: ['./AboutSettings.vue'],
     'feature-flags': ['./FeatureFlagSettings.vue'],
@@ -193,7 +189,6 @@ it('settings navigation groups preserve the intended Axolotl information archite
         'home-navigation',
         'shortcut-settings',
         'language-translation',
-        'ai',
         'mcp',
     ])
     expect(categoriesForGroup('game')).toEqual([
@@ -203,17 +198,8 @@ it('settings navigation groups preserve the intended Axolotl information archite
         'content-downloads',
         'network-multiplayer',
     ])
-    expect(categoriesForGroup('data-privacy')).toEqual([
-        'storage-backups',
-        'third-party-accounts',
-        'privacy-data',
-    ])
-    expect(categoriesForGroup('support')).toEqual([
-        'updates',
-        'about',
-        'network-connection',
-        'logs',
-    ])
+    expect(categoriesForGroup('data-privacy')).toEqual(['storage-backups'])
+    expect(categoriesForGroup('support')).toEqual(['about', 'network-connection', 'logs'])
     expect(categoriesForGroup('developer')).toEqual([])
     expect(categoriesForGroup('developer', true)).toEqual(['feature-flags'])
 })

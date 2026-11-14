@@ -53,7 +53,7 @@
             <div class="flex gap-2 w-full min-w-0">
                 <Avatar
                     size="36px"
-                    :src="selectedAccount ? avatarUrl : axolotlLogo"
+                    :src="selectedAccount ? avatarUrl : brandLogo"
                     :pixelated="Boolean(selectedAccount)"
                     :unframed-natural-width="72"
                 />
@@ -444,7 +444,7 @@ import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import Draggable from 'vuedraggable'
 
-import axolotlLogo from '@/assets/axolotl.png'
+import brandLogo from '@/assets/branding/tacraft.png'
 import steveSkinTexture from '@/assets/skins/steve.png?inline'
 import MinecraftLoginModal from '@/components/ui/MinecraftLoginModal.vue'
 import {
@@ -889,7 +889,7 @@ const avatarUrl = computed(() => {
             return cachedUrl
         }
     }
-    return selectedAccount.value ? defaultSteveHeadUrl : axolotlLogo
+    return selectedAccount.value ? defaultSteveHeadUrl : brandLogo
 })
 
 function getAccountAvatarUrl(account: MinecraftCredential) {

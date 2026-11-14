@@ -91,7 +91,7 @@ const messages = defineMessages({
     },
     colorThemeDescription: {
         id: 'app.appearance-settings.color-theme.description',
-        defaultMessage: 'Select your preferred color theme for Axolotl Launcher.',
+        defaultMessage: 'Select your preferred color theme for TaCraft Player Community.',
     },
     themeSuiteTitle: {
         id: 'app.appearance-settings.theme-suite.title',
@@ -258,7 +258,7 @@ const messages = defineMessages({
     },
     closeBehaviorTitle: {
         id: 'app.appearance-settings.close-behavior.title',
-        defaultMessage: 'Choose how to close Axolotl Launcher',
+        defaultMessage: 'Choose how to close TaCraft Player Community',
     },
     closeBehaviorDescription: {
         id: 'app.appearance-settings.close-behavior.description',

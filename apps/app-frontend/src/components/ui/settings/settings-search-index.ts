@@ -18,18 +18,6 @@ const message = (id: string, defaultMessage: string): MessageDescriptor => ({ id
 
 export const settingsSearchEntries: SettingsSearchEntry[] = [
     {
-        id: 'third-party-shimu',
-        categoryId: 'third-party-accounts',
-        targetId: 'settings-target-third-party-shimu',
-        label: message('app.third-party.shimu', 'Shimu Space'),
-        keywords: [
-            defineMessage({
-                id: 'app.third-party.search',
-                defaultMessage: 'Shimu mcimg OAuth account authorization sign in connect',
-            }),
-        ],
-    },
-    {
         id: 'mcp-authentication',
         categoryId: 'mcp',
         targetId: 'settings-target-mcp-access',
@@ -88,7 +76,7 @@ export const settingsSearchEntries: SettingsSearchEntry[] = [
         label: message('app.appearance-settings.color-theme.title', 'Color theme'),
         description: message(
             'app.appearance-settings.color-theme.description',
-            'Select your preferred color theme for Axolotl Launcher.',
+            'Select your preferred color theme for TaCraft Player Community.',
         ),
     },
     {
@@ -432,7 +420,7 @@ export const settingsSearchEntries: SettingsSearchEntry[] = [
         targetId: 'settings-target-appearance-close-behavior',
         label: message(
             'app.appearance-settings.close-behavior.title',
-            'Choose how to close Axolotl Launcher',
+            'Choose how to close TaCraft Player Community',
         ),
         keywords: [
             message('app.appearance-settings.close-behavior.close', 'Close directly'),
@@ -541,13 +529,6 @@ export const settingsSearchEntries: SettingsSearchEntry[] = [
         label: message('app.translation-settings.display-section-title', 'Translation display'),
     },
     {
-        id: 'ai-providers',
-        categoryId: 'ai',
-        targetId: 'settings-target-ai-providers',
-        label: message('app.ai-settings.title', 'AI providers'),
-        keywords: [message('app.settings.tabs.ai', 'AI')],
-    },
-    {
         id: 'log-share',
         categoryId: 'launch-defaults',
         targetId: 'settings-target-log-share',
@@ -578,44 +559,6 @@ export const settingsSearchEntries: SettingsSearchEntry[] = [
                 defaultMessage: 'Log sharing & AI analysis',
             }),
         ],
-    },
-    {
-        id: 'privacy-telemetry',
-        categoryId: 'privacy-data',
-        targetId: 'settings-target-privacy-telemetry',
-        label: message('app.settings.privacy.telemetry', 'Telemetry'),
-    },
-    {
-        id: 'privacy-section',
-        categoryId: 'privacy-data',
-        targetId: 'settings-target-privacy',
-        label: message('app.settings.privacy.section-title', 'Privacy & data sharing'),
-    },
-    {
-        id: 'privacy-discord-rpc',
-        categoryId: 'privacy-data',
-        targetId: 'settings-target-privacy-discord-rpc',
-        label: message('app.settings.privacy.discord-rpc', 'Discord rich presence'),
-    },
-    {
-        id: 'privacy-external-scheme',
-        categoryId: 'privacy-data',
-        targetId: 'settings-target-privacy-external-scheme',
-        label: message('app.settings.privacy.external-scheme', 'Allow external links'),
-        description: message(
-            'app.settings.privacy.external-scheme-description',
-            'Respond to axolotl:// links from browsers and other apps.',
-        ),
-    },
-    {
-        id: 'privacy-privileged-scheme',
-        categoryId: 'privacy-data',
-        targetId: 'settings-target-privacy-privileged-scheme',
-        label: message('app.settings.privacy.privileged-scheme', 'Allow privileged link actions'),
-        description: message(
-            'app.settings.privacy.privileged-scheme-description',
-            'Let axolotl:// links change settings and stop game processes.',
-        ),
     },
     // The instance-sync category had no entries at all, so none of its rows
     // could be found by search even though the category is registered.
@@ -912,11 +855,6 @@ export const settingsSearchEntries: SettingsSearchEntry[] = [
             'app.settings.storage.analysisDescription',
             'Inspect launcher and game storage, then analyze unused metadata for cleanup.',
         ),
-    },
-    {
-        id: 'updates-history',
-        categoryId: 'updates',
-        label: message('app.settings.updates.announcements.history', 'Release history'),
     },
     {
         id: 'about-product',

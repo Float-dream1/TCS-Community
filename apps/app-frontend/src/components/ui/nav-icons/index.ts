@@ -9,6 +9,7 @@
  * on the resting pose and is added on top of the others, so the states hand
  * over to each other without a jump.
  */
+export { default as BlankNavIcon } from './BlankNavIcon.vue'
 export { default as CreateNavIcon } from './CreateNavIcon.vue'
 export { default as DiscoverNavIcon } from './DiscoverNavIcon.vue'
 export { default as HomeNavIcon } from './HomeNavIcon.vue'

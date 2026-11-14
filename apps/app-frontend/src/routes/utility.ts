@@ -13,6 +13,15 @@ export const utilityRoutes: RouteRecordRaw[] = [
         },
     },
     {
+        path: '/blank',
+        name: 'Blank',
+        component: () => import('@/pages/Blank.vue'),
+        meta: {
+            breadcrumb: [{ name: 'Blank' }],
+            discordActivity: 'Idling...',
+        },
+    },
+    {
         path: '/create',
         name: 'Create',
         component: () => import('@/pages/Create.vue'),

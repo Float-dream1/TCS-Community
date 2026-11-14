@@ -84,6 +84,7 @@ import ModpackAlreadyInstalledModal from '@/components/ui/modal/ModpackAlreadyIn
 import ModpackInstallModal from '@/components/ui/modal/ModpackInstallModal.vue'
 import PrivacyConsentModal from '@/components/ui/modal/PrivacyConsentModal.vue'
 import {
+    BlankNavIcon,
     CreateNavIcon,
     DiscoverNavIcon,
     HomeNavIcon,
@@ -105,7 +106,6 @@ import QuickInstanceSwitcher from '@/components/ui/QuickInstanceSwitcher.vue'
 import RemoteAnnouncements from '@/components/ui/RemoteAnnouncements.vue'
 import ResourceOperationPreviewModal from '@/components/ui/ResourceOperationPreviewModal.vue'
 import { themeSuiteMessages } from '@/components/ui/settings/theme-suite/messages'
-import SplashScreen from '@/components/ui/SplashScreen.vue'
 import UnsavedSelectionModal from '@/components/ui/UnsavedSelectionModal.vue'
 import WindowControls from '@/components/ui/WindowControls.vue'
 import { useCheckDisableMouseover } from '@/composables/macCssFix.js'
@@ -602,7 +602,20 @@ const {
 } = appUpdateState
 let delayedUpdatePopupTimeout: ReturnType<typeof setTimeout> | null = null
 
+/**
+ * This fork ships without a launcher updater: there is no update feed to ask,
+ * no download to apply and no settings page for either. The check is skipped
+ * here so nothing in the UI ever waits on one.
+ */
+const LAUNCHER_UPDATES_ENABLED = false
+
 async function checkUpdates() {
+    if (!LAUNCHER_UPDATES_ENABLED) {
+        updatesEnabled.value = false
+
+        return
+    }
+
     if (!(await areUpdatesEnabled())) {
         console.log('Skipping update check as updates are disabled in this build or environment')
         updatesEnabled.value = false
@@ -1117,7 +1130,7 @@ const messages = defineMessages({
     },
     closeLauncherTitle: {
         id: 'app.close-launcher.title',
-        defaultMessage: 'Choose how to close Axolotl Launcher',
+        defaultMessage: 'Choose how to close TaCraft Player Community',
     },
     closeLauncherDirect: {
         id: 'app.close-launcher.direct',
@@ -1191,6 +1204,10 @@ const messages = defineMessages({
     lab: {
         id: 'app.navigation.lab',
         defaultMessage: 'Lab',
+    },
+    blankPage: {
+        id: 'app.navigation.blank',
+        defaultMessage: 'Blank page',
     },
     createInstance: {
         id: 'app.navigation.create-instance',
@@ -2083,7 +2100,7 @@ async function handleCloseRequested(event: { preventDefault: () => void }) {
 const handleClose = closeWindowImmediately
 
 const loading = setupLoadingStateProvider()
-loading.setEnabled(false)
+loading.setEnabled(true)
 let initialLoadToken: symbol | null = loading.begin()
 let routerToken: symbol | null = null
 let suspenseToken: symbol | null = null
@@ -2632,11 +2649,11 @@ const updatePopupMessages = defineMessages({
     },
     meteredBody: {
         id: 'app.update-popup.body.metered',
-        defaultMessage: `Axolotl Launcher v{version} is available now! Since you're on a metered network, we didn't automatically download it.`,
+        defaultMessage: `TaCraft Player Community v{version} is available now! Since you're on a metered network, we didn't automatically download it.`,
     },
     manualBody: {
         id: 'app.update-popup.body.manual',
-        defaultMessage: `Axolotl Launcher v{version} is available. This copy can't update itself, so download the new version from the website or update it with your package manager.`,
+        defaultMessage: `TaCraft Player Community v{version} is available. This copy can't update itself, so download the new version from the website or update it with your package manager.`,
     },
     downloadPage: {
         id: 'app.update-popup.download-page',
@@ -2644,7 +2661,7 @@ const updatePopupMessages = defineMessages({
     },
     downloadedBody: {
         id: 'app.update-popup.body.download-complete',
-        defaultMessage: `Axolotl Launcher v{version} has finished downloading. Reload to update now, or automatically when you close Axolotl Launcher.`,
+        defaultMessage: `TaCraft Player Community v{version} has finished downloading. Reload to update now, or automatically when you close TaCraft Player Community.`,
     },
     reload: {
         id: 'app.update-popup.reload',
@@ -3026,7 +3043,6 @@ provideAppUpdateDownloadProgress(appUpdateDownload)
 </script>
 
 <template>
-    <SplashScreen v-if="!stateFailed" ref="splashScreen" data-tauri-drag-region />
     <!--
         A failed initialization never renders the app shell, so this framed window
         ends up with no title bar and no controls at all. This strip keeps the
@@ -3209,6 +3225,14 @@ provideAppUpdateDownloadProgress(appUpdateDownload)
                     <span v-else class="text-base font-semibold">
                         {{ page.title.slice(0, 1) }}
                     </span>
+                </NavButton>
+                <NavButton
+                    v-if="!themeStore.isNavItemHidden('blank')"
+                    v-tooltip.right="formatMessage(messages.blankPage)"
+                    to="/blank"
+                    :is-primary="(r) => r.path.startsWith('/blank')"
+                >
+                    <BlankNavIcon />
                 </NavButton>
             </NavRail>
             <div class="h-px w-6 mx-auto my-2 bg-surface-5"></div>

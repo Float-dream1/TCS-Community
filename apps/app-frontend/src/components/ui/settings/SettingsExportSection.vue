@@ -40,8 +40,8 @@ const queryClient = useQueryClient()
 const emit = defineEmits<{ changed: [] }>()
 
 const EXPORT_FILE_NAMES: Record<SettingsExportKind, string> = {
-    effective: 'Axolotl Launcher settings',
-    patch: 'Axolotl Launcher settings patch',
+    effective: 'TaCraft Player Community settings',
+    patch: 'TaCraft Player Community settings patch',
 }
 
 type SettingsOperation = SettingsExportKind | 'cleanup' | 'import'

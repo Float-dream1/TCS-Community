@@ -282,8 +282,8 @@ export type ThemeStore = {
 }
 
 export const DEFAULT_THEME_STORE: ThemeStore = {
-    selectedTheme: 'dark',
-    selectedAccentColor: 'pink',
+    selectedTheme: 'light',
+    selectedAccentColor: 'orange',
     systemAccentColor: null,
     systemAccentSupported: null,
     advancedRendering: true,

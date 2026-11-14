@@ -44,7 +44,7 @@ use wry::{
 
 const HTML: &str = include_str!("installer.html");
 const LOGO: &[u8] = include_bytes!("../../app/icons/128x128.png");
-const MAIN_BINARY_NAME: &str = "Axolotl Launcher.exe";
+const MAIN_BINARY_NAME: &str = "TaCraft Player Community.exe";
 const WEBVIEW_SHUTDOWN_TIMEOUT: Duration = Duration::from_secs(5);
 
 #[derive(Clone, Debug, Serialize)]
@@ -178,7 +178,7 @@ pub fn run() -> Result<(), String> {
     let mut event_loop =
         EventLoopBuilder::<UserEvent>::with_user_event().build();
     let window = WindowBuilder::new()
-        .with_title("Axolotl Launcher")
+        .with_title("TaCraft Player Community")
         .with_inner_size(LogicalSize::new(940.0, 620.0))
         .with_min_inner_size(LogicalSize::new(940.0, 620.0))
         .with_max_inner_size(LogicalSize::new(940.0, 620.0))
@@ -601,7 +601,7 @@ fn validate_request(
     }
     let write_test = resource_dir
         .join(format!(".axolotl-write-test-{}", std::process::id()));
-    if fs::write(&write_test, b"Axolotl Launcher").is_err() {
+    if fs::write(&write_test, b"TaCraft Player Community").is_err() {
         return Err(("resource", "notWritable"));
     }
     let _ = fs::remove_file(write_test);
@@ -866,7 +866,7 @@ fn install_dir_requires_elevation(install_dir: &Path) -> bool {
         .write(true)
         .create_new(true)
         .open(&write_test)
-        .and_then(|mut file| file.write_all(b"Axolotl Launcher"))
+        .and_then(|mut file| file.write_all(b"TaCraft Player Community"))
         .is_ok();
     let removed = fs::remove_file(&write_test).is_ok();
 
@@ -1090,17 +1090,17 @@ mod tests {
         assert_eq!(
             nsis_value_option(
                 "INSTALL_DIR",
-                r"C:\Program Files\Axolotl Launcher",
+                r"C:\Program Files\TaCraft Player Community",
             ),
-            r#"/INSTALL_DIR="C:\Program Files\Axolotl Launcher""#,
+            r#"/INSTALL_DIR="C:\Program Files\TaCraft Player Community""#,
         );
     }
 
     #[test]
     fn uninstall_directory_is_the_last_unquoted_argument() {
         for directory in [
-            r"C:\Program Files\Axolotl Launcher",
-            "D:\\游戏\\Axolotl Launcher\\",
+            r"C:\Program Files\TaCraft Player Community",
+            "D:\\游戏\\TaCraft Player Community\\",
         ] {
             for delete_app_data in [false, true] {
                 let args = uninstaller_arguments(
@@ -1208,7 +1208,7 @@ mod tests {
             .expect("test directory should be created");
 
         assert!(!install_dir_requires_elevation(
-            &directory.join("Axolotl Launcher")
+            &directory.join("TaCraft Player Community")
         ));
 
         fs::remove_dir_all(directory)
@@ -1217,13 +1217,14 @@ mod tests {
 
     #[test]
     fn wide_strings_preserve_windows_paths_and_end_with_null() {
-        let value = wide_null(r"C:\Downloads\Axolotl Launcher Setup.exe");
+        let value =
+            wide_null(r"C:\Downloads\TaCraft Player Community Setup.exe");
 
         assert_eq!(value.last(), Some(&0));
         assert_eq!(
             String::from_utf16(&value[..value.len() - 1])
                 .expect("test path should be valid UTF-16"),
-            r"C:\Downloads\Axolotl Launcher Setup.exe"
+            r"C:\Downloads\TaCraft Player Community Setup.exe"
         );
     }
 

@@ -1,8 +1,8 @@
 const trimTrailingSlash = (url: string) => url.replace(/\/$/, '')
 
 export const AxolotlBrandConfig = Object.freeze({
-    productName: 'Axolotl Launcher',
-    shortProductName: 'Axolotl',
+    productName: 'TaCraft Player Community',
+    shortProductName: 'TaCraft Player Community',
     website: 'https://www.axlmc.org/',
     repositoryUrl: 'https://github.com/Mystic-Stars/Axolotl',
     supportUrl: 'https://github.com/Mystic-Stars/Axolotl/issues',
@@ -11,7 +11,7 @@ export const AxolotlBrandConfig = Object.freeze({
     sponsorUrl: 'https://afdian.com/a/Mystic-Stars',
     bundleIdentifier: 'red.ghs.axolotl',
     deepLinkScheme: 'axolotl',
-    userAgent: (version: string, os: string) => `Axolotl-Launcher/${version} (${os})`,
+    userAgent: (version: string, os: string) => `TaCraft-Player-Community/${version} (${os})`,
 })
 
 const siteUrl = trimTrailingSlash(import.meta.env.MODRINTH_URL || 'https://modrinth.com')

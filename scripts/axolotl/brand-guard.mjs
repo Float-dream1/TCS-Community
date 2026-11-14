@@ -58,13 +58,13 @@ const shellMain = await readFile('apps/app/src/main.rs', 'utf8')
 const shellBuild = await readFile('apps/app/build.rs', 'utf8')
 const pluginCapabilities = JSON.parse(await readFile('apps/app/capabilities/plugins.json', 'utf8'))
 const requiredInvariants = [
-    ['product name', tauriConfig.productName === 'Axolotl Launcher'],
+    ['product name', tauriConfig.productName === 'TaCraft Player Community'],
     ['bundle identifier', tauriConfig.identifier === 'red.ghs.axolotl'],
     [
         'deep-link scheme',
         tauriConfig.plugins?.['deep-link']?.desktop?.schemes?.includes('axolotl') === true,
     ],
-    ['User-Agent format', frontendConfig.includes('Axolotl-Launcher/${version} (${os})')],
+    ['User-Agent format', frontendConfig.includes('TaCraft-Player-Community/${version} (${os})')],
     [
         'private Modrinth login removed',
         !shellMain.includes('api::mr_auth::init') &&

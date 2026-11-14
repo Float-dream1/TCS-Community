@@ -61,9 +61,9 @@
       }
     ]
   },
-  "productName": "Axolotl Launcher",
+  "productName": "TaCraft Player Community",
   "version": "../app-frontend/package.json",
-  "mainBinaryName": "Axolotl Launcher",
+  "mainBinaryName": "TaCraft Player Community",
   "identifier": "red.ghs.axolotl",
   "plugins": {
     "deep-link": {
@@ -83,7 +83,7 @@
         "fullscreen": false,
         "height": 800,
         "resizable": true,
-        "title": "Axolotl Launcher",
+        "title": "TaCraft Player Community",
         "label": "main",
         "width": 1280,
         "minHeight": 700,
@@ -116,7 +116,7 @@
         "style-src": "'unsafe-inline' 'self' axolotl-theme: http://axolotl-theme.localhost:*",
         "script-src": "'self' 'unsafe-eval' 'wasm-unsafe-eval'",
         "worker-src": "'self' blob:",
-        "frame-src": "https://www.youtube.com https://www.youtube-nocookie.com https://discord.com 'self' http://axolotl-skin.localhost axolotl-skin://localhost",
+        "frame-src": "https://www.youtube.com https://www.youtube-nocookie.com https://discord.com https://www.tcscraft.com 'self' http://axolotl-skin.localhost axolotl-skin://localhost",
         "media-src": "'self' data: blob: https://*.githubusercontent.com axolotl-theme: http://axolotl-theme.localhost:*"
       },
       "csp": {
@@ -127,7 +127,7 @@
         "style-src": "'unsafe-inline' 'self' axolotl-theme: http://axolotl-theme.localhost:*",
         "script-src": "'self' 'unsafe-eval' 'wasm-unsafe-eval'",
         "worker-src": "'self' blob:",
-        "frame-src": "https://www.youtube.com https://www.youtube-nocookie.com https://discord.com 'self' axolotl-skin://localhost http://axolotl-skin.localhost",
+        "frame-src": "https://www.youtube.com https://www.youtube-nocookie.com https://discord.com https://www.tcscraft.com 'self' axolotl-skin://localhost http://axolotl-skin.localhost",
         "media-src": "'self' data: blob: https://*.githubusercontent.com axolotl-theme: http://axolotl-theme.localhost:*"
       }
     }

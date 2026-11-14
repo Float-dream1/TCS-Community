@@ -92,9 +92,10 @@ impl PendingUpdate {
 
     pub fn install(self, restart: bool) -> std::result::Result<(), String> {
         match self {
-            Self::Installer(_, _, UpdateMethod::Manual) => {
-                Err("This copy of Axolotl Launcher cannot update itself".into())
-            }
+            Self::Installer(_, _, UpdateMethod::Manual) => Err(
+                "This copy of TaCraft Player Community cannot update itself"
+                    .into(),
+            ),
             Self::Installer(update, data, method) => {
                 if let Some(installer) = method.package_installer() {
                     tauri::async_runtime::block_on(install_linux_package(
@@ -701,7 +702,7 @@ pub async fn enqueue_update_for_installation<R: Runtime>(
     let checked = webview.resources_table().get::<CheckedUpdate>(rid)?;
     if checked.install_method == UpdateMethod::Manual {
         return Err(catalog_error(
-            "This copy of Axolotl Launcher cannot update itself. Download the new version from the website or update it with your package manager.".into(),
+            "This copy of TaCraft Player Community cannot update itself. Download the new version from the website or update it with your package manager.".into(),
         ));
     }
     let update = &checked.update;
@@ -828,7 +829,7 @@ pub enum UpdateMethod {
 }
 
 /// Package name of the launcher in both the .deb and the .rpm: the Tauri
-/// bundler kebab-cases the product name ("Axolotl Launcher").
+/// bundler kebab-cases the product name ("TaCraft Player Community").
 const PACKAGE_NAME: &str = "axolotl-launcher";
 
 /// The package manager command that installs an update package.
@@ -1583,16 +1584,18 @@ mod tests {
         let list = "/.
 /usr
 /usr/bin
-/usr/bin/Axolotl Launcher
-                    /usr/share/applications/Axolotl Launcher.desktop
+/usr/bin/TaCraft Player Community
+                    /usr/share/applications/TaCraft Player Community.desktop
 ";
         assert!(dpkg_list_contains(
             list,
-            std::path::Path::new("/usr/bin/Axolotl Launcher")
+            std::path::Path::new("/usr/bin/TaCraft Player Community")
         ));
         assert!(!dpkg_list_contains(
             list,
-            std::path::Path::new("/home/me/Applications/Axolotl Launcher")
+            std::path::Path::new(
+                "/home/me/Applications/TaCraft Player Community"
+            )
         ));
         assert!(!dpkg_list_contains("", std::path::Path::new("/usr/bin/x")));
     }

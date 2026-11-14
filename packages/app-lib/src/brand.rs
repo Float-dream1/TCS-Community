@@ -1,14 +1,18 @@
-pub const PRODUCT_NAME: &str = "Axolotl Launcher";
-pub const SHORT_PRODUCT_NAME: &str = "Axolotl";
+pub const PRODUCT_NAME: &str = "TaCraft Player Community";
+pub const SHORT_PRODUCT_NAME: &str = "TaCraft Player Community";
 pub const WEBSITE: &str = "https://www.ghs.red";
 pub const BUNDLE_IDENTIFIER: &str = "red.ghs.axolotl";
 pub const DEEP_LINK_SCHEME: &str = "axolotl";
+
+/// Folder the launcher creates inside the platform data directory
+/// (`%APPDATA%` on Windows, `~/.local/share` on Linux).
+pub const DATA_DIR_NAME: &str = "TCS-Community";
 
 /// Longest accepted data directory suffix; enough to name a branch or a build.
 const MAX_DATA_DIR_SUFFIX_LEN: usize = 32;
 
 pub fn user_agent(version: &str, os: &str) -> String {
-    format!("Axolotl-Launcher/{version} ({os})")
+    format!("TaCraft-Player-Community/{version} ({os})")
 }
 
 /// Name of the directory the launcher keeps its settings, databases and logs in.
@@ -17,10 +21,10 @@ pub fn user_agent(version: &str, os: &str) -> String {
 /// at build time (see `build.rs`). Local and test builds use this to stay away
 /// from the database of an installed launcher: the two otherwise share one
 /// directory, and a database touched by a newer build can no longer be opened
-/// by an older one. Releases leave the variable unset, so they resolve to the
-/// plain identifier.
-pub fn app_data_dir_identifier(app_identifier: &str) -> String {
-    data_dir_identifier(app_identifier, option_env!("AXOLOTL_DATA_DIR_SUFFIX"))
+/// by an older one. Releases leave the variable unset, so they resolve to
+/// [`DATA_DIR_NAME`] - the bundle identifier is not part of the folder name.
+pub fn app_data_dir_identifier(_app_identifier: &str) -> String {
+    data_dir_identifier(DATA_DIR_NAME, option_env!("AXOLOTL_DATA_DIR_SUFFIX"))
 }
 
 /// Appends a sanitized suffix to the identifier.
@@ -64,7 +68,7 @@ mod tests {
     fn user_agent_is_unique_and_contains_no_contact_information() {
         let user_agent = user_agent("1.2.3", "windows");
 
-        assert_eq!(user_agent, "Axolotl-Launcher/1.2.3 (windows)");
+        assert_eq!(user_agent, "TaCraft-Player-Community/1.2.3 (windows)");
         assert!(!user_agent.contains("ghs.red"));
         assert!(!user_agent.contains("http"));
         assert!(!user_agent.contains('@'));

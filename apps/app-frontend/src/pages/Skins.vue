@@ -184,10 +184,6 @@ const messages = defineMessages({
         id: 'app.skins.preview.edit-button',
         defaultMessage: 'Edit skin',
     },
-    axolotlAlt: {
-        id: 'app.skins.sign-in.axolotl-alt',
-        defaultMessage: 'Axolotl Launcher',
-    },
     signInTitle: {
         id: 'app.skins.sign-in.title',
         defaultMessage: 'Please sign in',
@@ -195,7 +191,7 @@ const messages = defineMessages({
     signInDescription: {
         id: 'app.skins.sign-in.description',
         defaultMessage:
-            'Please sign into your Minecraft account to use the skin management features of Axolotl Launcher.',
+            'Please sign into your Minecraft account to use the skin management features of TaCraft Player Community.',
     },
     signInButton: {
         id: 'app.skins.sign-in.button',
@@ -1366,11 +1362,6 @@ watch(offline, () => {
         <div
             class="relative mx-auto flex w-full max-w-xl flex-col gap-5 rounded-lg bg-surface-3 p-7 shadow-lg"
         >
-            <img
-                src="@/assets/axolotl.png"
-                :alt="formatMessage(messages.axolotlAlt)"
-                class="absolute -top-32 right-8 h-36 w-36 object-contain md:right-20"
-            />
             <div
                 class="absolute top-0 left-0 w-full h-[1px] opacity-40 bg-gradient-to-r from-transparent via-green-500 to-transparent"
                 style="

@@ -5,7 +5,6 @@ export type SettingsCategoryId =
     | 'home-navigation'
     | 'language-translation'
     | 'shortcut-settings'
-    | 'ai'
     | 'mcp'
     | 'launch-defaults'
     | 'instance-sync'
@@ -14,9 +13,6 @@ export type SettingsCategoryId =
     | 'network-multiplayer'
     | 'network-connection'
     | 'storage-backups'
-    | 'privacy-data'
-    | 'third-party-accounts'
-    | 'updates'
     | 'about'
     | 'logs'
     | 'feature-flags'
@@ -73,15 +69,6 @@ export const settingsCategoryDefinitions: SettingsCategoryDefinition[] = [
         group: 'launcher',
     },
     {
-        id: 'ai',
-        name: defineMessage({
-            id: 'app.settings.tabs.ai',
-            defaultMessage: 'AI features',
-        }),
-        group: 'launcher',
-        flushContent: true,
-    },
-    {
         id: 'mcp',
         name: defineMessage({
             id: 'app.settings.tabs.mcp',
@@ -136,30 +123,6 @@ export const settingsCategoryDefinitions: SettingsCategoryDefinition[] = [
             defaultMessage: 'Storage & backups',
         }),
         group: 'data-privacy',
-    },
-    {
-        id: 'third-party-accounts',
-        name: defineMessage({
-            id: 'app.settings.tabs.third-party-accounts',
-            defaultMessage: 'Third-party accounts',
-        }),
-        group: 'data-privacy',
-    },
-    {
-        id: 'privacy-data',
-        name: defineMessage({
-            id: 'app.settings.tabs.privacy-data',
-            defaultMessage: 'Privacy & data sharing',
-        }),
-        group: 'data-privacy',
-    },
-    {
-        id: 'updates',
-        name: defineMessage({
-            id: 'app.settings.tabs.updates',
-            defaultMessage: 'Updates',
-        }),
-        group: 'support',
     },
     {
         id: 'about',

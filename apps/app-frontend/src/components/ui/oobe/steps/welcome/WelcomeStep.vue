@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { RightArrowIcon } from '@modrinth/assets'
-import axolotlVisual from '@modrinth/assets/branding/axolotl.png'
+import axolotlVisual from '@modrinth/assets/branding/tacraft.png'
 import { Button, defineMessages, type MessageDescriptor, useVIntl } from '@modrinth/ui'
 import { onMounted, ref } from 'vue'
 

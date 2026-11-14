@@ -259,8 +259,10 @@ fn push_compacted_log_run(
 ) {
     if count >= LOG_COMPACTION_THRESHOLD {
         output.push_str(line);
-        let _ =
-            write!(output, " (x{count} times - compacted by Axolotl Launcher)");
+        let _ = write!(
+            output,
+            " (x{count} times - compacted by TaCraft Player Community)"
+        );
         output.push_str(line_ending);
         stats.compacted_runs += 1;
         stats.compacted_lines += count;
@@ -449,7 +451,7 @@ async fn maybe_emit_log_compaction_warning(
     }
 
     let _ = crate::event::emit::emit_warning(&format!(
-        "Axolotl Launcher has compacted {} repeated log lines in {} before displaying it for performance reasons.",
+        "TaCraft Player Community has compacted {} repeated log lines in {} before displaying it for performance reasons.",
         format_count(stats.compacted_lines),
         file_name,
     ))
@@ -465,7 +467,7 @@ async fn maybe_emit_log_display_truncation_warning(
     }
 
     let _ = crate::event::emit::emit_warning(&format!(
-        "Axolotl Launcher truncated {file_name} before displaying it to keep the console responsive. The original log file remains unchanged.",
+        "TaCraft Player Community truncated {file_name} before displaying it to keep the console responsive. The original log file remains unchanged.",
     ))
     .await;
 }

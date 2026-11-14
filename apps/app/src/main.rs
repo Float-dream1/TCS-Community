@@ -27,6 +27,7 @@ mod error;
 #[path = "../../installer-ui/src/executable_install.rs"]
 mod executable_install;
 mod exit_barrier;
+mod forum_consent;
 mod lightweight_mode;
 mod mod_translation;
 mod portable;
@@ -891,7 +892,9 @@ fn main() {
         &tauri_context.config().identifier,
     );
 
-    tracing::info!("Initialized tracing subscriber. Loading Axolotl Launcher!");
+    tracing::info!(
+        "Initialized tracing subscriber. Loading TaCraft Player Community!"
+    );
 
     let mut builder = tauri::Builder::default()
         .register_uri_scheme_protocol(
@@ -991,6 +994,10 @@ fn main() {
             #[cfg(target_os = "macos")]
             if let Some(window) = app.get_webview_window("main") {
                 macos::traffic_lights::install(&window)?;
+            }
+
+            if let Some(window) = app.get_webview_window("main") {
+                forum_consent::install(&window);
             }
 
             let app_handle = app.handle().clone();
@@ -1336,7 +1343,7 @@ fn main() {
                     DialogBuilder::message()
                         .set_level(MessageLevel::Error)
                         .set_title("Initialization error")
-                        .set_text("Your Microsoft Edge WebView2 installation is corrupt.\n\nMicrosoft Edge WebView2 is required to run Axolotl Launcher.\n\nRepair or reinstall the Microsoft Edge WebView2 Runtime, then start Axolotl again.")
+                        .set_text("Your Microsoft Edge WebView2 installation is corrupt.\n\nMicrosoft Edge WebView2 is required to run TaCraft Player Community.\n\nRepair or reinstall the Microsoft Edge WebView2 Runtime, then start Axolotl again.")
                         .alert()
                         .show()
                         .unwrap();

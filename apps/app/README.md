@@ -1,5 +1,5 @@
-# Axolotl Launcher
+# TaCraft Player Community
 
-Axolotl Launcher is the Tauri desktop shell for the Axolotl Minecraft launcher.
+TaCraft Player Community is the Tauri desktop shell for the launcher.
 
 Run `pnpm install` and `pnpm app:dev` from the workspace root to start a development build.

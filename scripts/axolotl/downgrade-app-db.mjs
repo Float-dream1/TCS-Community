@@ -56,6 +56,7 @@ const CHANNELS = ['release', 'beta']
 // Only recent migrations are listed. Dropping to a threshold before them is
 // refused rather than guessed at; --allow-unmapped accepts the risk explicitly.
 const REVERTIBLE_SCHEMA = {
+    20261113130000: {},
     20261113120000: {},
     20261114120000: {
         columns: [
@@ -168,7 +169,14 @@ const REVERTIBLE_SCHEMA = {
             { type: 'view', name: 'resource_legacy_projects' },
             { type: 'view', name: 'resource_instance_pack_projects' },
         ],
-        tables: ['resource_identity_evidence', 'resource_aliases', 'resource_source_types', 'resource_source_projects', 'resource_preferences', 'resources'],
+        tables: [
+            'resource_identity_evidence',
+            'resource_aliases',
+            'resource_source_types',
+            'resource_source_projects',
+            'resource_preferences',
+            'resources',
+        ],
     },
     20261004140000: {
         columns: [
@@ -582,10 +590,20 @@ function objectsPresent(db, objects) {
     const database = openReadOnly(db)
     try {
         return objects.map(({ type, name }) => {
-            if (!['view', 'trigger', 'index'].includes(type) || !/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(name)) {
+            if (
+                !['view', 'trigger', 'index'].includes(type) ||
+                !/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(name)
+            ) {
                 fail('invalid schema object in REVERTIBLE_SCHEMA')
             }
-            return { type, name, present: database.prepare('SELECT 1 FROM sqlite_master WHERE type = ? AND name = ?').get(type, name) !== undefined }
+            return {
+                type,
+                name,
+                present:
+                    database
+                        .prepare('SELECT 1 FROM sqlite_master WHERE type = ? AND name = ?')
+                        .get(type, name) !== undefined,
+            }
         })
     } finally {
         database.close()
@@ -629,7 +647,9 @@ function runningLauncher() {
             })
 
             if (result.error) {
-                fail(`could not run tasklist to check for a running launcher: ${result.error.message}`)
+                fail(
+                    `could not run tasklist to check for a running launcher: ${result.error.message}`,
+                )
             }
 
             const output = `${result.stdout ?? ''}${result.stderr ?? ''}`
@@ -674,7 +694,9 @@ function planDowngrade(db, target) {
     assertLauncherDatabase(database, db)
 
     const rows = database
-        .prepare('SELECT version, success FROM _sqlx_migrations WHERE version >= ? ORDER BY version')
+        .prepare(
+            'SELECT version, success FROM _sqlx_migrations WHERE version >= ? ORDER BY version',
+        )
         .all(target)
     database.close()
 
@@ -685,9 +707,7 @@ function planDowngrade(db, target) {
     // migration that created it records the table under `tables`, and a
     // downgrade passing both must not demand back what the newer one removed.
     // A table that is still there is dropped as the mapping says.
-    const dropped = new Set(
-        applied.flatMap((version) => REVERTIBLE_SCHEMA[version]?.drops ?? []),
-    )
+    const dropped = new Set(applied.flatMap((version) => REVERTIBLE_SCHEMA[version]?.drops ?? []))
 
     const plan = applied.map((version) => ({
         version,
@@ -718,11 +738,17 @@ function reportPlan({ applied, failed, plan }) {
         }
         for (const { table, present } of tables) {
             note(
-                present ? `  ${version}: drop table ${table}` : `  ${version}: table ${table} is MISSING`,
+                present
+                    ? `  ${version}: drop table ${table}`
+                    : `  ${version}: table ${table} is MISSING`,
             )
         }
         for (const { type, name, present } of objects) {
-            note(present ? `  ${version}: drop ${type} ${name}` : `  ${version}: ${type} ${name} is MISSING`)
+            note(
+                present
+                    ? `  ${version}: drop ${type} ${name}`
+                    : `  ${version}: ${type} ${name} is MISSING`,
+            )
         }
     }
 
@@ -745,7 +771,9 @@ function checkMappings(plan) {
         .filter(
             ({ mapped, columns, tables, objects }) =>
                 mapped &&
-                (columns.some((column) => !column.present) || tables.some((table) => !table.present) || objects.some((object) => !object.present)),
+                (columns.some((column) => !column.present) ||
+                    tables.some((table) => !table.present) ||
+                    objects.some((object) => !object.present)),
         )
         .map(({ version }) => version)
 
@@ -761,9 +789,15 @@ function unmappedVersions(plan) {
 }
 
 function checkPendingContentRecovery(database, plan) {
-    if (plan.some(({ tables }) => tables.some(({ table, present }) => table === 'content_file_operations' && present)) &&
-        database.prepare('SELECT COUNT(*) AS count FROM content_file_operations').get().count > 0) {
-        throw new Error('content file recovery is pending; start the current launcher to finish recovery before downgrading')
+    if (
+        plan.some(({ tables }) =>
+            tables.some(({ table, present }) => table === 'content_file_operations' && present),
+        ) &&
+        database.prepare('SELECT COUNT(*) AS count FROM content_file_operations').get().count > 0
+    ) {
+        throw new Error(
+            'content file recovery is pending; start the current launcher to finish recovery before downgrading',
+        )
     }
 }
 
@@ -853,7 +887,9 @@ function main() {
             const versions = [...state.applied, ...state.failed]
             if (versions.length > 0) {
                 writable
-                    .prepare(`DELETE FROM _sqlx_migrations WHERE version IN (${versions.join(', ')})`)
+                    .prepare(
+                        `DELETE FROM _sqlx_migrations WHERE version IN (${versions.join(', ')})`,
+                    )
                     .run()
             }
             writable.exec('COMMIT')
@@ -864,7 +900,9 @@ function main() {
             )
         }
 
-        const remaining = writable.prepare('SELECT COUNT(*) AS count FROM _sqlx_migrations').get().count
+        const remaining = writable
+            .prepare('SELECT COUNT(*) AS count FROM _sqlx_migrations')
+            .get().count
         const integrity = writable.prepare('PRAGMA integrity_check').get().integrity_check
         const brokenReferences = writable.prepare('PRAGMA foreign_key_check').all()
 

@@ -1,6 +1,5 @@
 import {
     ArchiveIcon,
-    BotIcon,
     CoffeeIcon,
     CpuIcon,
     FileTextIcon,
@@ -56,7 +55,6 @@ const categoryContent: Record<SettingsCategoryId, Pick<SettingsCategory, 'icon' 
         icon: LanguagesIcon,
         content: defineAsyncComponent(() => import('./LanguageTranslationSettings.vue')),
     },
-    ai: { icon: BotIcon, content: defineAsyncComponent(() => import('./AISettings.vue')) },
     mcp: { icon: PlugIcon, content: defineAsyncComponent(() => import('./McpSettings.vue')) },
     'shortcut-settings': {
         icon: KeyboardIcon,
@@ -89,18 +87,6 @@ const categoryContent: Record<SettingsCategoryId, Pick<SettingsCategory, 'icon' 
     'storage-backups': {
         icon: ArchiveIcon,
         content: defineAsyncComponent(() => import('./StorageBackupSettings.vue')),
-    },
-    'third-party-accounts': {
-        icon: UsersIcon,
-        content: defineAsyncComponent(() => import('./ThirdPartyAccountsSettings.vue')),
-    },
-    'privacy-data': {
-        icon: ShieldIcon,
-        content: defineAsyncComponent(() => import('./PrivacySettings.vue')),
-    },
-    updates: {
-        icon: RefreshCwIcon,
-        content: defineAsyncComponent(() => import('./UpdateSettings.vue')),
     },
     logs: {
         icon: FileTextIcon,

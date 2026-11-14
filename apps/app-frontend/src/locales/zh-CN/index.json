@@ -12950,6 +12950,9 @@
   "app.multiplayer.verifying": {
     "message": "验证中..."
   },
+  "app.navigation.blank": {
+    "message": "空白页"
+  },
   "app.navigation.create-instance": {
     "message": "创建新实例"
   },
