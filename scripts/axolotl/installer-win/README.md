@@ -1,36 +1,35 @@
-# Windows installer (standalone)
+# Windows installer
 
-`tcs-installer.nsi` builds the user-facing Windows installer for
-TaCraft Player Community: Modern UI 2, Simplified Chinese by default, welcome
-bitmap in the launcher's orange palette, and a copy of the app plus its
-`resources` folder.
+`tcs-installer.nsi` builds the user-facing installer for TaCraft Player
+Community. It has no wizard chrome: one frameless page drawn from
+`assets/body.bmp` (orange banner on top, white body below) plus real controls
+and bitmap buttons, then the stock progress page while the payload unpacks.
 
-It installs per user into `%LOCALAPPDATA%\TCS-Player-Community`, creates a
-desktop and start menu shortcut, registers an uninstall entry, and keeps
-`%APPDATA%\TCS-Community` (game data) when uninstalling.
+Everything is Simplified Chinese by default. The installer is per-user
+(`%LOCALAPPDATA%\TCS-Player-Community`), needs no elevation, registers an
+uninstall entry, and leaves `%APPDATA%\TCS-Community` (game data) alone when
+uninstalling.
 
 ## Build
 
-Requires NSIS 3.10 (`makensis`). On Linux the Windows build of makensis runs
-fine under wine:
+Needs NSIS 3.10 with the Unicode build. On Linux the Windows build of
+`makensis` runs under wine:
 
 ```sh
-# stage the release build
 mkdir -p stage
 cp path/to/TaCraft-Player-Community.exe stage/
 cp -r path/to/resources stage/
-
 wine /path/to/nsis-3.10/makensis.exe /INPUTCHARSET UTF8 tcs-installer.nsi
 ```
 
-The stock Simplified Chinese language file asks for SimSun 9pt, which looks
-dated next to the launcher. Rewrite the font line in
-`Contrib/Language files/SimpChinese.nlf` (`宋体` → `Microsoft YaHei UI`) in your
-NSIS copy before building.
+## Artwork
 
-## Bitmaps
+* `assets/body.bmp` — the whole page: banner (96 px tall) plus the body with
+  its labels and rules. 1024x560 so higher DPI pages stay covered; the page
+  clips it.
+* `assets/btn-*.bmp`, `assets/check-*.bmp` — buttons and checkboxes are
+  bitmap statics with `SS_NOTIFY`, toggled in script, so they can look like the
+  launcher instead of stock Win32 controls.
 
-`assets/welcome.bmp` (164x314) and `assets/header.bmp` (150x57) are generated
-from `packages/assets/branding/tacraft-512.png`: rounded app icon over the
-launcher's orange wave gradient. Regenerate them with any image editor if the
-branding changes; NSIS only accepts 24-bit BMP.
+Changing the palette means regenerating these from
+`packages/assets/branding/tacraft-512.png`; NSIS only accepts 24-bit BMP.
