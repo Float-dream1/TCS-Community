@@ -53,9 +53,10 @@
 
 ## 本地构建
 
-仓库是 pnpm workspace + turbo 的 monorepo。
+仓库是 pnpm workspace + turbo 的 monorepo。子模块（`apps/app/vendor/cubiomes`、`third-party/blockbench`）必须先初始化，否则种子地图和皮肤编辑器都编不出来。
 
 ```bash
+git submodule update --init --depth 1
 pnpm install
 ```
 
@@ -85,11 +86,44 @@ cargo xwin build --release --target x86_64-pc-windows-msvc \
 
 产物为 `target/x86_64-pc-windows-msvc/release/theseus_gui.exe`，发布时还需要把 `apps/app/resources/`（含 `seed-map`、`blockbench-skin`）放到 exe 同级的 `resources` 目录。
 
-子模块（`apps/app/vendor/cubiomes`、`third-party/blockbench`）需要先初始化：
+## Windows 构建
 
-```bash
-git submodule update --init --depth 1 apps/app/vendor/cubiomes third-party/blockbench
+在 Windows 上直接原生编译，不需要交叉工具链。
+
+**前置依赖**
+
+| 依赖                   | 说明                                                      |
+| ---------------------- | --------------------------------------------------------- |
+| Rust                   | rustup 安装，默认 MSVC 工具链                             |
+| Visual Studio 生成工具 | 勾选「使用 C++ 的桌面开发」，提供 MSVC 与 Windows SDK     |
+| Node.js                | 24.11+ 或 22.21+（更老的版本会被 workspace 拒绝）         |
+| pnpm                   | 10.x，`corepack enable pnpm`                              |
+| MinGW-w64 gcc          | MSYS2 的 `mingw-w64-x86_64-gcc`，用于编译种子地图引擎 DLL |
+
+MinGW 是硬性依赖：`apps/app/build.rs` 在 Windows 目标下直接调用 gcc 构建 `axolotl-cubiomes.dll`，缺了会停在 `MinGW cubiomes engine build failed`。gcc 不在 `PATH` 里时用环境变量指定：
+
+```bat
+set AXOLOTL_CUBIOMES_CC=C:\msys64\mingw64\bin\gcc.exe
 ```
+
+**打成安装包**
+
+```bat
+cd apps/app
+pnpm build
+```
+
+会依次完成前端构建、Rust 编译和 NSIS 打包，安装包产物在 `target\release\bundle\nsis\`。安装模式是 `currentUser`，不需要管理员权限。
+
+**只出可执行文件**
+
+```bat
+cargo build --release --features custom-protocol
+```
+
+产物是 `target\release\theseus_gui.exe`。运行前要把 `apps\app\resources\`（含 `seed-map`、`blockbench-skin`）拷成 exe 同级的 `resources` 目录，否则种子地图和皮肤编辑器的资源会缺失。
+
+首次编译时 `build.rs` 会自己 `npm ci` 并构建皮肤编辑器资源，需要联网和 `PATH` 里的 node。临时跳过可以设 `AXOLOTL_SKIP_BLOCKBENCH_BUILD=1`，但跳过之后打包会因为缺少 `resources/blockbench-skin` 直接失败，只适合改 Rust 逻辑时的快速迭代。
 
 ## 社区
 
