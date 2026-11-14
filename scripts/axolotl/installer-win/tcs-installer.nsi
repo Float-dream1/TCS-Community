@@ -16,7 +16,7 @@ SetDatablockOptimize on
 
 !define PRODUCT_NAME "TaCraft Player Community"
 !define APP_EXE "TaCraft-Player-Community.exe"
-!define APP_VERSION "1.0.1"
+!define APP_VERSION "1.1.5"
 !define PRODUCT_PUBLISHER "TCS Community"
 !define INSTALL_DIR_NAME "TCS-Player-Community"
 !define UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\TCS-Player-Community"
@@ -30,7 +30,7 @@ ShowUninstDetails nevershow
 Icon "icon.ico"
 UninstallIcon "icon.ico"
 
-VIProductVersion "1.0.1.0"
+VIProductVersion "1.1.5.0"
 VIAddVersionKey "ProductName" "${PRODUCT_NAME}"
 VIAddVersionKey "ProductVersion" "${APP_VERSION}"
 VIAddVersionKey "FileVersion" "${APP_VERSION}"
