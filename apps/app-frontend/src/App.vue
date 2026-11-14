@@ -90,7 +90,6 @@ import {
     HomeNavIcon,
     LabNavIcon,
     LibraryNavIcon,
-    ScreenshotsNavIcon,
     SettingsNavIcon,
     SkinStationNavIcon,
     WorldsNavIcon,
@@ -1186,10 +1185,6 @@ const messages = defineMessages({
     downloads: {
         id: 'app.navigation.downloads',
         defaultMessage: 'Downloads',
-    },
-    screenshots: {
-        id: 'app.navigation.screenshots',
-        defaultMessage: 'Screenshots',
     },
     lab: {
         id: 'app.navigation.lab',
@@ -3132,14 +3127,6 @@ provideAppUpdateDownloadProgress(appUpdateDownload)
                     to="/"
                 >
                     <HomeNavIcon />
-                </NavButton>
-                <NavButton
-                    v-if="!themeStore.isNavItemHidden('screenshots')"
-                    v-tooltip.right="formatMessage(messages.screenshots)"
-                    to="/screenshots"
-                    :is-primary="(r) => r.path.startsWith('/screenshots')"
-                >
-                    <ScreenshotsNavIcon />
                 </NavButton>
                 <NavButton
                     v-if="

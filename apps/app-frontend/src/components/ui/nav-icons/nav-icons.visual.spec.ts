@@ -12,7 +12,6 @@ import {
     LabNavIcon,
     LibraryNavIcon,
     NAV_ICON_ANIMATION_PREFIX,
-    ScreenshotsNavIcon,
     SettingsNavIcon,
     WorldsNavIcon,
 } from '.'
@@ -22,7 +21,6 @@ afterEach(() => cleanup.splice(0).forEach((fn) => fn()))
 
 const ICONS: [string, Component][] = [
     ['home', HomeNavIcon],
-    ['screenshots', ScreenshotsNavIcon],
     ['worlds', WorldsNavIcon],
     ['discover', DiscoverNavIcon],
     ['library', LibraryNavIcon],

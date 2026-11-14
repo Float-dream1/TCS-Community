@@ -61,18 +61,7 @@ export function resolveOpenRoute(path: string, query?: string | null) {
     if (path.startsWith('/instance/')) {
         const id = path.slice('/instance/'.length).split('/')[0]
         const tail = path.slice(`/instance/${id}`.length)
-        if (
-            id &&
-            [
-                '',
-                '/files',
-                '/files/studio',
-                '/logs',
-                '/worlds',
-                '/screenshots',
-                '/upgrade',
-            ].includes(tail)
-        ) {
+        if (id && ['', '/files', '/files/studio', '/logs', '/worlds', '/upgrade'].includes(tail)) {
             return route(path, query)
         }
         return null
@@ -84,7 +73,7 @@ export function resolveOpenRoute(path: string, query?: string | null) {
         }
         return null
     }
-    if (['/downloads', '/create', '/worlds', '/screenshots', '/help/drop'].includes(path)) {
+    if (['/downloads', '/create', '/worlds', '/help/drop'].includes(path)) {
         return route(path, query)
     }
     return null

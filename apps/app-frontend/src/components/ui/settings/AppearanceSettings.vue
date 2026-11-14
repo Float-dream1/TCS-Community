@@ -414,7 +414,6 @@ const messages = defineMessages({
         id: 'app.navigation.discover-content',
         defaultMessage: 'Discover content',
     },
-    navScreenshots: { id: 'app.navigation.screenshots', defaultMessage: 'Screenshots' },
     navLibrary: { id: 'app.navigation.library', defaultMessage: 'Library' },
     navWorlds: { id: 'app.navigation.worlds', defaultMessage: 'Worlds' },
     navLab: { id: 'app.navigation.lab', defaultMessage: 'Lab' },
@@ -510,7 +509,6 @@ type NavTreeItem = {
 const NAV_TREE_ITEMS: NavTreeItem[] = [
     { id: 'home', label: messages.navHome, group: 'browse' },
     { id: 'discover', label: messages.navDiscover, group: 'browse' },
-    { id: 'screenshots', label: messages.navScreenshots, group: 'browse' },
     { id: 'library', label: messages.navLibrary, group: 'play' },
     { id: 'worlds', label: messages.navWorlds, group: 'play' },
     { id: 'lab', label: messages.navLab, group: 'tools' },
