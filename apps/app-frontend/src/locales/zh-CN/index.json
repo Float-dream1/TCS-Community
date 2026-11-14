@@ -218,6 +218,11 @@
   "app.action-bar.installs": {
     "message": "安装"
   },
+  "app.action-bar.launcher-update-available": "启动器有新版本 {version} 可用",
+  "app.action-bar.launcher-update-body": "当前版本 {current}，最新版本 {version}。",
+  "app.action-bar.launcher-update-open": "前往下载",
+  "app.action-bar.launcher-update-skip": "忽略此版本",
+  "app.action-bar.launcher-update-title": "发现新版本",
   "app.action-bar.make-primary-instance": {
     "message": "设为主实例"
   },
@@ -345,10 +350,7 @@
     "message": "隐藏至托盘"
   },
   "app.appearance-settings.close-behavior.title": {
-    "message": "关闭 Axolotl Launcher 的方式"
-  },
-  "app.appearance-settings.color-theme.description": {
-    "message": "为 Axolotl Launcher 选择偏好的色彩主题。"
+    "message": "关闭 TaCraft Player Community 的方式"
   },
   "app.appearance-settings.color-theme.title": {
     "message": "色彩主题"
@@ -894,7 +896,7 @@
     "message": "记住我的选择"
   },
   "app.close-launcher.title": {
-    "message": "选择关闭 Axolotl Launcher 的方式"
+    "message": "选择关闭 TaCraft Player Community 的方式"
   },
   "app.close-launcher.tray": {
     "message": "隐藏至托盘"
@@ -2145,7 +2147,7 @@
     "message": "调试信息"
   },
   "app.error.directory-description": {
-    "message": "Axolotl Launcher 无法迁移到所选目录。请联系支持获取帮助，或取消目录更改。"
+    "message": "TaCraft Player Community 无法迁移到所选目录。请联系支持获取帮助，或取消目录更改。"
   },
   "app.error.directory-title": {
     "message": "无法更改应用目录"
@@ -2163,7 +2165,7 @@
     "message": "与 Microsoft、Xbox 或 Minecraft 服务的连接被拒绝。这些服务可能被 hosts 文件阻止，请参考支持文章进行修复。"
   },
   "app.error.loader-description": {
-    "message": "Axolotl Launcher 无法找到此实例所需的加载器版本。"
+    "message": "TaCraft Player Community 无法找到此实例所需的加载器版本。"
   },
   "app.error.loader-fix": {
     "message": "请使用下方按钮修复此实例。"
@@ -2181,7 +2183,7 @@
     "message": "登录 Minecraft"
   },
   "app.error.network-description": {
-    "message": "Axolotl Launcher 连接 Microsoft 服务时遇到问题，这通常是网络连接不佳造成的。请重试；如果问题持续存在，请参考支持文章。"
+    "message": "TaCraft Player Community 连接 Microsoft 服务时遇到问题，这通常是网络连接不佳造成的。请重试；如果问题持续存在，请参考支持文章。"
   },
   "app.error.network-issues": {
     "message": "网络问题"
@@ -2202,7 +2204,7 @@
     "message": "正在使用 PC Game Pass、从基岩版转来，或刚刚购买游戏？"
   },
   "app.error.permissions-description": {
-    "message": "Axolotl Launcher 无法写入所选目录。请调整目录权限后重试，或取消目录更改。"
+    "message": "TaCraft Player Community 无法写入所选目录。请调整目录权限后重试，或取消目录更改。"
   },
   "app.error.permissions-title": {
     "message": "更改目录权限"
@@ -2220,7 +2222,7 @@
     "message": "空间不足"
   },
   "app.error.state-database-newer-description": {
-    "message": "数据库最后一次是被较新版本的 Axolotl 打开的，它将其升级为当前版本无法读取的格式。你的实例与设置仍然保留。"
+    "message": "数据库最后一次是被较新版本的 TaCraft 打开的，它将其升级为当前版本无法读取的格式。你的实例与设置仍然保留。"
   },
   "app.error.state-database-newer-fix-downgrade": {
     "message": "如果你只是在试用构建、并非日常使用启动器，可以改用 scripts/axolotl/downgrade-app-db.mjs 将数据库回退。"
@@ -2229,10 +2231,10 @@
     "message": "要让启动器重新启动，可以任选其一："
   },
   "app.error.state-database-newer-fix-update": {
-    "message": "重新安装较新版本的 Axolotl——它可以直接打开这个数据库。"
+    "message": "重新安装较新版本的 TaCraft——它可以直接打开这个数据库。"
   },
   "app.error.state-description": {
-    "message": "Axolotl Launcher 未能正确加载，可能有文件损坏或缺少必要文件。"
+    "message": "TaCraft Player Community 未能正确加载，可能有文件损坏或缺少必要文件。"
   },
   "app.error.state-fix-internet": {
     "message": "检查网络连接，然后重启应用。"
@@ -2244,7 +2246,7 @@
     "message": "重新下载并安装应用。"
   },
   "app.error.state-title": {
-    "message": "Axolotl Launcher 初始化失败"
+    "message": "TaCraft Player Community 初始化失败"
   },
   "app.error.support-article": {
     "message": "支持文章"
@@ -2533,33 +2535,6 @@
   },
   "app.home.calendar.title": {
     "message": "日历"
-  },
-  "app.home.challenge.difficulty": {
-    "message": "难度：{level}"
-  },
-  "app.home.challenge.easy": {
-    "message": "简单"
-  },
-  "app.home.challenge.empty-hint": {
-    "message": "这一局就给自己定个小目标吧。"
-  },
-  "app.home.challenge.empty-title": {
-    "message": "今天没有挑战"
-  },
-  "app.home.challenge.hard": {
-    "message": "困难"
-  },
-  "app.home.challenge.medium": {
-    "message": "中等"
-  },
-  "app.home.challenge.number": {
-    "message": "第 {number} 号"
-  },
-  "app.home.challenge.shuffle": {
-    "message": "换一个"
-  },
-  "app.home.challenge.title": {
-    "message": "每日小挑战"
   },
   "app.home.greeting.account.nickname.hint": {
     "message": "替换问候语中的账号名。留空则沿用账号名。"
@@ -4185,10 +4160,10 @@
     "message": "编辑分组"
   },
   "app.instances.game-directory.managed": {
-    "message": "Axolotl 数据目录"
+    "message": "TaCraft 数据目录"
   },
   "app.instances.game-directory.managed-short": {
-    "message": "Axolotl 数据"
+    "message": "TaCraft 数据"
   },
   "app.instances.group-by": {
     "message": "分组方式"
@@ -9078,7 +9053,7 @@
     "message": "红石"
   },
   "app.lab.recipe-generator.copyright.disclaimer-body": {
-    "message": "Minecraft 素材版权归 Mojang Studios / Microsoft 所有，仅用于识别兼容的游戏内容。Axolotl Launcher 与 Mojang Studios 或 Microsoft 无关联，也未获得其认可。"
+    "message": "Minecraft 素材版权归 Mojang Studios / Microsoft 所有，仅用于识别兼容的游戏内容。TaCraft Player Community 与 Mojang Studios 或 Microsoft 无关联，也未获得其认可。"
   },
   "app.lab.recipe-generator.copyright.disclaimer-heading": {
     "message": "非官方工具"
@@ -10428,13 +10403,13 @@
     "message": "复制 /tp"
   },
   "app.lab.seed-map.copyright.disclaimer-body": {
-    "message": "Minecraft 是 Mojang Synergies AB 的商标。Axolotl Launcher 与 Mojang 或 MinecraftSearch 均无隶属关系，也未获得其认可。"
+    "message": "Minecraft 是 Mojang Synergies AB 的商标。TaCraft Player Community 与 Mojang 或 MinecraftSearch 均无隶属关系，也未获得其认可。"
   },
   "app.lab.seed-map.copyright.disclaimer-heading": {
     "message": "非官方工具"
   },
   "app.lab.seed-map.copyright.engine-body": {
-    "message": "地图预测由 xpple/cubiomes 和 Axolotl 原生集成在本地计算；该引擎基于 Cubitect 的 cubiomes，以 MIT 许可证提供。"
+    "message": "地图预测由 xpple/cubiomes 和 TaCraft 原生集成在本地计算；该引擎基于 Cubitect 的 cubiomes，以 MIT 许可证提供。"
   },
   "app.lab.seed-map.copyright.engine-heading": {
     "message": "本地地图引擎"
@@ -12924,7 +12899,7 @@
     "message": "选择你喜欢的样式。"
   },
   "app.oobe.dialog-label": {
-    "message": "设置 Axolotl Launcher"
+    "message": "设置 TaCraft Player Community"
   },
   "app.oobe.java.add.action": {
     "message": "添加"
@@ -13092,7 +13067,7 @@
     "message": "Discord 运行时显示你当前使用启动器或游玩的状态。"
   },
   "app.privacy-consent.intro": {
-    "message": "选择 Axolotl 可以发送或展示的内容。确认前不会发送任何遥测。"
+    "message": "选择 TaCraft 可以发送或展示的内容。确认前不会发送任何遥测。"
   },
   "app.privacy-consent.privacy-policy": {
     "message": "阅读隐私政策"
@@ -14418,7 +14393,7 @@
     "message": "正在准备服务器..."
   },
   "app.servers.modpack.unsupported-loader-description": {
-    "message": "此整合包使用 {loader}，但 Axolotl 目前仅支持原版、Fabric 和 Quilt 整合包服务端。{loader} 支持即将推出。"
+    "message": "此整合包使用 {loader}，但 TaCraft 目前仅支持原版、Fabric 和 Quilt 整合包服务端。{loader} 支持即将推出。"
   },
   "app.servers.modpack.unsupported-loader-title": {
     "message": "{loader} 服务端暂不支持"
@@ -16932,7 +16907,7 @@
     "message": "正在以便携模式运行，所有数据已固定在程序目录下，无法修改。"
   },
   "app.settings.resources.axolotl-data-directory": {
-    "message": "Axolotl 数据目录"
+    "message": "TaCraft 数据目录"
   },
   "app.settings.resources.chinese-names": {
     "message": "下载时附加已知中文名"
@@ -17064,7 +17039,7 @@
     "message": "Minecraft 目录"
   },
   "app.settings.resources.minecraft-directories-description": {
-    "message": "添加一个或多个供实例使用的外部 .minecraft 文件夹。这些文件夹与 Axolotl 数据分开保存。"
+    "message": "添加一个或多个供实例使用的外部 .minecraft 文件夹。这些文件夹与 TaCraft 数据分开保存。"
   },
   "app.settings.resources.minecraft-directory-mode": {
     "message": "游戏目录模式"
@@ -17382,7 +17357,7 @@
     "message": "外部游戏目录"
   },
   "app.settings.storage.externalHelp": {
-    "message": "这些目录由 Axolotl 之外的程序管理，不计入启动器总量。重叠目录只列出一次。"
+    "message": "这些目录由 TaCraft 之外的程序管理，不计入启动器总量。重叠目录只列出一次。"
   },
   "app.settings.storage.externalMetadata": {
     "message": "关联的外部实例也使用此目录，未能确认用途的文件已保留。"
@@ -17976,7 +17951,7 @@
     "message": "将 Release 数据复制到 Beta？"
   },
   "app.settings.updates.channel.description": {
-    "message": "选择 Axolotl 接收的启动器版本。"
+    "message": "选择 TaCraft 接收的启动器版本。"
   },
   "app.settings.updates.channel.label": {
     "message": "通道"
@@ -17988,7 +17963,7 @@
     "message": "稳定且经过测试的新功能与修复，更新频率较慢。"
   },
   "app.settings.updates.channel.restart-description": {
-    "message": "立即重启 Axolotl 以开始使用新的更新通道，或稍后手动重启。"
+    "message": "立即重启 TaCraft 以开始使用新的更新通道，或稍后手动重启。"
   },
   "app.settings.updates.channel.restart-development-description": {
     "message": "手动重启开发会话后，新的更新通道才会生效。"
@@ -18039,7 +18014,7 @@
     "message": "数据库隔离"
   },
   "app.settings.updates.database-operation.active-target": {
-    "message": "无法覆盖当前正在使用的数据库。请先重启 Axolotl 并切换更新通道。"
+    "message": "无法覆盖当前正在使用的数据库。请先重启 TaCraft 并切换更新通道。"
   },
   "app.settings.updates.database-operation.beta-to-release": {
     "message": "从 Beta 复制到 Release"
@@ -18057,7 +18032,7 @@
     "message": "覆盖数据库？"
   },
   "app.settings.updates.database-operation.failed": {
-    "message": "无法复制数据库。请确认 Axolotl 未在使用目标数据库。"
+    "message": "无法复制数据库。请确认 TaCraft 未在使用目标数据库。"
   },
   "app.settings.updates.database-operation.label": {
     "message": "数据库操作"
@@ -18114,7 +18089,7 @@
     "message": "只有通过加密签名验证的更新才会被安装。"
   },
   "app.settings.updates.up-to-date": {
-    "message": "Axolotl 已是最新版本。"
+    "message": "TaCraft 已是最新版本。"
   },
   "app.shortcut-settings.change-shortcut": {
     "message": "更改「{action}」的快捷键"
@@ -18270,7 +18245,7 @@
     "message": "背景"
   },
   "app.theme-suite.built-in-description": {
-    "message": "默认的 Axolotl 配色，跟随所选的浅色、深色或 OLED 模式。"
+    "message": "默认的 TaCraft 配色，跟随所选的浅色、深色或 OLED 模式。"
   },
   "app.theme-suite.built-in-name": {
     "message": "内置主题"
@@ -18318,7 +18293,7 @@
     "message": "完成"
   },
   "app.theme-suite.engine-label": {
-    "message": "需要 Axolotl {version}"
+    "message": "需要 TaCraft {version}"
   },
   "app.theme-suite.export-snapshot": {
     "message": "导出快照"
@@ -18738,19 +18713,19 @@
     "message": "此版本暂未内置更新公告，请前往官网查看完整更新日志。"
   },
   "app.update-announcement.unknown-title": {
-    "message": "Axolotl Launcher 已更新"
+    "message": "TaCraft Player Community 已更新"
   },
   "app.update-announcement.version": {
     "message": "版本 {version}"
   },
   "app.update-popup.body.download-complete": {
-    "message": "Axolotl Launcher v{version} 更新已下载完成！立即重启更新，或退出时自动安装。"
+    "message": "TaCraft Player Community v{version} 更新已下载完成！立即重启更新，或退出时自动安装。"
   },
   "app.update-popup.body.manual": {
-    "message": "Axolotl Launcher v{version} 现已发布。当前这份启动器无法自行更新，请从官网下载新版本，或通过包管理器更新。"
+    "message": "TaCraft Player Community v{version} 现已发布。当前这份启动器无法自行更新，请从官网下载新版本，或通过包管理器更新。"
   },
   "app.update-popup.body.metered": {
-    "message": "Axolotl Launcher v{version} 现已发布！由于你正在使用按流量计费的网络，该更新未自动下载。"
+    "message": "TaCraft Player Community v{version} 现已发布！由于你正在使用按流量计费的网络，该更新未自动下载。"
   },
   "app.update-popup.changelog": {
     "message": "更新日志"
@@ -18789,7 +18764,7 @@
     "message": "正在安装版本 {version}"
   },
   "app.warning.running-as-admin": {
-    "message": "Axolotl 正在以管理员身份运行。此模式下无法拖拽导入文件，请以普通权限重新启动启动器。"
+    "message": "TaCraft 正在以管理员身份运行。此模式下无法拖拽导入文件，请以普通权限重新启动启动器。"
   },
   "app.window-controls.close": {
     "message": "关闭"
@@ -19263,7 +19238,7 @@
     "message": "光影包"
   },
   "drop.help.title": {
-    "message": "我可以拖入什么到 Axolotl？"
+    "message": "我可以拖入什么到 TaCraft？"
   },
   "drop.help.worlds-desc": {
     "message": "拖放存档文件夹来导入到实例。"
@@ -19791,7 +19766,7 @@
     "message": "版本隔离（存放于 versions/）"
   },
   "instance.settings.tabs.general.game-dir.managed-note": {
-    "message": "此实例使用 Axolotl 托管目录。"
+    "message": "此实例使用 TaCraft 托管目录。"
   },
   "instance.settings.tabs.general.game-dir.move-note": {
     "message": "切换隔离仅更新启动器路径。请自行移动模组、存档和配置文件夹以保持一致。"
@@ -20364,7 +20339,7 @@
     "message": "{count} 个精确选择"
   },
   "instance.upgrade.customize.custom.description": {
-    "message": "为所选内容固定精确版本，其余依赖图由 Axolotl 求解。"
+    "message": "为所选内容固定精确版本，其余依赖图由 TaCraft 求解。"
   },
   "instance.upgrade.customize.custom.discard-switch": {
     "message": "放弃并切换"
@@ -20469,7 +20444,7 @@
     "message": "继续前请处理自定义冲突。"
   },
   "instance.upgrade.customize.search-limit.body": {
-    "message": "Axolotl 未能在搜索上限内找到方案。请放宽一项自定义选择。"
+    "message": "TaCraft 未能在搜索上限内找到方案。请放宽一项自定义选择。"
   },
   "instance.upgrade.customize.search-limit.title": {
     "message": "已达到搜索上限"

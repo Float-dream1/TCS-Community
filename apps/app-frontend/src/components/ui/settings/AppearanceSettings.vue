@@ -89,10 +89,6 @@ const messages = defineMessages({
         id: 'app.appearance-settings.color-theme.title',
         defaultMessage: 'Color theme',
     },
-    colorThemeDescription: {
-        id: 'app.appearance-settings.color-theme.description',
-        defaultMessage: 'Select your preferred color theme for TaCraft Player Community.',
-    },
     themeSuiteTitle: {
         id: 'app.appearance-settings.theme-suite.title',
         defaultMessage: 'Theme suite',
@@ -758,9 +754,6 @@ watch(
                 >
                     {{ formatMessage(messages.colorThemeTitle) }}
                 </h2>
-                <p class="m-0 mt-1 text-sm leading-relaxed text-[var(--color-text-tertiary)]">
-                    {{ formatMessage(messages.colorThemeDescription) }}
-                </p>
             </template>
             <div class="flex flex-col gap-4 p-4">
                 <ThemeSelector

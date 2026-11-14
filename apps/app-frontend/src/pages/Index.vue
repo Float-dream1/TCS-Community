@@ -40,7 +40,6 @@ import {
 import { HOME_LAUNCH_KEY } from '@/components/home/home-launch-context'
 import { type HomeMinimalOptions, resolveHomeMinimalLayout } from '@/components/home/home-minimal'
 import { getActivePlayerAccount } from '@/components/home/home-utils'
-import HomeDailyChallenge from '@/components/home/HomeDailyChallenge.vue'
 import HomeDashboard from '@/components/home/HomeDashboard.vue'
 import HomeGreetingAccountModal from '@/components/home/HomeGreetingAccountModal.vue'
 import HomeInstancePickerModal from '@/components/home/HomeInstancePickerModal.vue'
@@ -596,7 +595,6 @@ if (!instancesLoaded || instances.value.length > 0) void fetchPlayerName()
             :class="{ 'slide-enter-from': !animateSidebarShow }"
         >
             <HomePlayInsights />
-            <HomeDailyChallenge />
         </div>
     </Teleport>
 </template>

@@ -74,10 +74,6 @@ export const settingsSearchEntries: SettingsSearchEntry[] = [
         categoryId: 'interface',
         targetId: 'settings-target-appearance-color-theme',
         label: message('app.appearance-settings.color-theme.title', 'Color theme'),
-        description: message(
-            'app.appearance-settings.color-theme.description',
-            'Select your preferred color theme for TaCraft Player Community.',
-        ),
     },
     {
         id: 'appearance-accent-color',

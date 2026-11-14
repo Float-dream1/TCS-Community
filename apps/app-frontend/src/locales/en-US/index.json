@@ -218,6 +218,11 @@
   "app.action-bar.installs": {
     "message": "Installs"
   },
+  "app.action-bar.launcher-update-available": "Version {version} of the launcher is available",
+  "app.action-bar.launcher-update-body": "You are on {current}, the newest release is {version}.",
+  "app.action-bar.launcher-update-open": "Open download page",
+  "app.action-bar.launcher-update-skip": "Skip this version",
+  "app.action-bar.launcher-update-title": "A newer launcher is available",
   "app.action-bar.make-primary-instance": {
     "message": "Make primary instance"
   },
@@ -346,9 +351,6 @@
   },
   "app.appearance-settings.close-behavior.title": {
     "message": "Choose how to close TaCraft Player Community"
-  },
-  "app.appearance-settings.color-theme.description": {
-    "message": "Select your preferred color theme for TaCraft Player Community."
   },
   "app.appearance-settings.color-theme.title": {
     "message": "Color theme"
@@ -2533,33 +2535,6 @@
   },
   "app.home.calendar.title": {
     "message": "Calendar"
-  },
-  "app.home.challenge.difficulty": {
-    "message": "Difficulty: {level}"
-  },
-  "app.home.challenge.easy": {
-    "message": "Easy"
-  },
-  "app.home.challenge.empty-hint": {
-    "message": "Pick your own goal for this session."
-  },
-  "app.home.challenge.empty-title": {
-    "message": "No challenge today"
-  },
-  "app.home.challenge.hard": {
-    "message": "Hard"
-  },
-  "app.home.challenge.medium": {
-    "message": "Medium"
-  },
-  "app.home.challenge.number": {
-    "message": "No. {number}"
-  },
-  "app.home.challenge.shuffle": {
-    "message": "Try another"
-  },
-  "app.home.challenge.title": {
-    "message": "Daily challenge"
   },
   "app.home.greeting.account.nickname.hint": {
     "message": "Replaces the account name in the greeting. Leave it empty to use the account name."
@@ -18270,7 +18245,7 @@
     "message": "Background"
   },
   "app.theme-suite.built-in-description": {
-    "message": "The default Axolotl colors, following the selected light, dark or OLED mode."
+    "message": "The default TaCraft colors, following the selected light, dark or OLED mode."
   },
   "app.theme-suite.built-in-name": {
     "message": "Built-in theme"
@@ -18318,7 +18293,7 @@
     "message": "Done"
   },
   "app.theme-suite.engine-label": {
-    "message": "Requires Axolotl {version}"
+    "message": "Requires TaCraft {version}"
   },
   "app.theme-suite.export-snapshot": {
     "message": "Export snapshot"
@@ -19791,7 +19766,7 @@
     "message": "Version isolated (stored in versions/)"
   },
   "instance.settings.tabs.general.game-dir.managed-note": {
-    "message": "This instance uses the Axolotl-managed folder."
+    "message": "This instance uses the TaCraft-managed folder."
   },
   "instance.settings.tabs.general.game-dir.move-note": {
     "message": "Switching isolation only updates the launcher path. Move the mods, saves, and config folders yourself to match."
