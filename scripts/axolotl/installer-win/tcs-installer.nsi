@@ -1,8 +1,8 @@
-; TaCraft Player Community — Windows installer (custom flat UI)
+; TaCraft Player Community — Windows installer (plain NSIS wizard)
 ;
-; Page 1 is drawn from bitmaps: an orange banner across the top and bitmap
-; buttons at the bottom right, all sitting on the stock NSIS page with the
-; caption removed. Page 2 is the stock progress page.
+; Deliberately the same shape as the 7-Zip installer: welcome → target folder →
+; progress → finish, all standard MUI pages, Simplified Chinese first, no
+; frameless tricks. Fast and predictable on every Windows box.
 
 Unicode true
 SetCompressor /SOLID lzma
@@ -11,9 +11,8 @@ RequestExecutionLevel user
 CRCCheck on
 SetDatablockOptimize on
 
-!include "LogicLib.nsh"
-!include "nsDialogs.nsh"
 !include "MUI2.nsh"
+!include "LogicLib.nsh"
 
 !define PRODUCT_NAME "TaCraft Player Community"
 !define APP_EXE "TaCraft-Player-Community.exe"
@@ -28,7 +27,6 @@ InstallDir "$LOCALAPPDATA\${INSTALL_DIR_NAME}"
 InstallDirRegKey HKCU "Software\TCS-Player-Community" "InstallDir"
 ShowInstDetails nevershow
 ShowUninstDetails nevershow
-AutoCloseWindow true
 Icon "icon.ico"
 UninstallIcon "icon.ico"
 
@@ -40,197 +38,47 @@ VIAddVersionKey "CompanyName" "${PRODUCT_PUBLISHER}"
 VIAddVersionKey "LegalCopyright" "GPL-3.0"
 VIAddVersionKey "FileDescription" "${PRODUCT_NAME} 安装程序"
 
-Var Dialog
-Var hBanner
-Var hBannerImg
-Var hDir
-Var hShortcut
-Var hRun
-Var hInstallBtn
-Var hInstallImg
-Var hCancelBtn
-Var hCancelImg
-Var hCloseBtn
-Var hCloseImg
-Var MakeShortcut
-Var RunAfter
-Var hShortcutImg
-Var hRunImg
-Var hTmpImg
+; --- look -------------------------------------------------------------------
+!define MUI_ICON "icon.ico"
+!define MUI_UNICON "icon.ico"
+!define MUI_ABORTWARNING
+!define MUI_WELCOMEFINISHPAGE_BITMAP "assets\welcome.bmp"
+!define MUI_UNWELCOMEFINISHPAGE_BITMAP "assets\welcome.bmp"
 
-; --- frameless window -------------------------------------------------------
-Function MakeFrameless
-  System::Call 'user32::GetWindowLongW(p $HWNDPARENT, i -16) i .R3'
-  IntOp $R3 $R3 & 0xFF30FFFF
-  System::Call 'user32::SetWindowLongW(p $HWNDPARENT, i -16, i $R3)'
-FunctionEnd
+!define MUI_WELCOMEPAGE_TITLE "$(welcomeTitle)"
+!define MUI_WELCOMEPAGE_TEXT "$(welcomeText)"
+!define MUI_DIRECTORYPAGE_TEXT_TOP "$(dirText)"
+!define MUI_FINISHPAGE_TITLE "$(finishTitle)"
+!define MUI_FINISHPAGE_TEXT "$(finishText)"
+!define MUI_FINISHPAGE_RUN "$INSTDIR\${APP_EXE}"
+!define MUI_FINISHPAGE_RUN_TEXT "$(runText)"
 
-; SS_NOTIFY on a bitmap static: the picture is the button, clicks arrive
-; as STN_CLICKED. The static paints itself, so nothing is lost behind it.
-Function MakeClickable
-  Exch $0
-  System::Call 'user32::GetWindowLongW(p $0, i -16) i .R1'
-  IntOp $R1 $R1 | 0x100
-  System::Call 'user32::SetWindowLongW(p $0, i -16, i $R1)'
-  Pop $0
-FunctionEnd
+!insertmacro MUI_PAGE_WELCOME
+!insertmacro MUI_PAGE_DIRECTORY
+!insertmacro MUI_PAGE_INSTFILES
+!insertmacro MUI_PAGE_FINISH
 
-; raise a control above the full-page bitmap
-Function BringToTop
-  Exch $0
-  System::Call 'user32::SetWindowPos(p $0, p -1, i 0, i 0, i 0, i 0, i 0x0003)'
-  Pop $0
-FunctionEnd
+!insertmacro MUI_UNPAGE_CONFIRM
+!insertmacro MUI_UNPAGE_INSTFILES
 
-Function OnToggleShortcut
-  ${If} $MakeShortcut == 1
-    StrCpy $MakeShortcut 0
-    ${NSD_SetImage} $hShortcut "assets\check-shortcut-off.bmp" $hTmpImg
-  ${Else}
-    StrCpy $MakeShortcut 1
-    ${NSD_SetImage} $hShortcut "assets\check-shortcut-on.bmp" $hTmpImg
-  ${EndIf}
-  Push $hShortcut
-  Call BringToTop
-  Pop $hShortcut
-FunctionEnd
+!insertmacro MUI_LANGUAGE "SimpChinese"
+!insertmacro MUI_LANGUAGE "English"
 
-Function OnToggleRun
-  ${If} $RunAfter == 1
-    StrCpy $RunAfter 0
-    ${NSD_SetImage} $hRun "assets\check-run-off.bmp" $hTmpImg
-  ${Else}
-    StrCpy $RunAfter 1
-    ${NSD_SetImage} $hRun "assets\check-run-on.bmp" $hTmpImg
-  ${EndIf}
-  Push $hRun
-  Call BringToTop
-  Pop $hRun
-FunctionEnd
+LangString welcomeTitle ${LANG_SIMPCHINESE} "欢迎使用 ${PRODUCT_NAME} ${APP_VERSION} 安装向导"
+LangString welcomeText  ${LANG_SIMPCHINESE} "现在将把 ${PRODUCT_NAME} ${APP_VERSION} 安装到你的计算机上。$\r$\n$\r$\n点「下一步」继续，点「取消」退出安装。"
+LangString dirText      ${LANG_SIMPCHINESE} "选择 ${PRODUCT_NAME} 的安装位置，然后点「安装」。"
+LangString finishTitle  ${LANG_SIMPCHINESE} "已完成 ${PRODUCT_NAME} 安装"
+LangString finishText   ${LANG_SIMPCHINESE} "${PRODUCT_NAME} ${APP_VERSION} 已经装好了。游戏数据会保存在 %APPDATA%\TCS-Community。"
+LangString runText      ${LANG_SIMPCHINESE} "立即运行 ${PRODUCT_NAME}"
 
-Function OnCancelClick
-  Quit
-FunctionEnd
+LangString welcomeTitle ${LANG_ENGLISH} "Welcome to the ${PRODUCT_NAME} ${APP_VERSION} Setup Wizard"
+LangString welcomeText  ${LANG_ENGLISH} "This wizard will install ${PRODUCT_NAME} ${APP_VERSION} on your computer.$\r$\n$\r$\nClick Next to continue, or Cancel to quit."
+LangString dirText      ${LANG_ENGLISH} "Choose where to install ${PRODUCT_NAME}, then click Install."
+LangString finishTitle  ${LANG_ENGLISH} "${PRODUCT_NAME} has been installed"
+LangString finishText   ${LANG_ENGLISH} "${PRODUCT_NAME} ${APP_VERSION} is ready to use. Game data lives in %APPDATA%\TCS-Community."
+LangString runText      ${LANG_ENGLISH} "Launch ${PRODUCT_NAME}"
 
-Function OnInstallClick
-  ${NSD_GetText} $hDir $0
-  ${If} $0 == ""
-    MessageBox MB_ICONSTOP "$(errNoDir)"
-    Return
-  ${EndIf}
-  StrCpy $INSTDIR $0
-  ${NSD_GetState} $hShortcut $MakeShortcut
-  ${NSD_GetState} $hRun $RunAfter
-  ; same as pressing Next
-  SendMessage $HWNDPARENT 0x0111 1 0
-FunctionEnd
-
-Function HideWizardButtons
-  GetDlgItem $0 $HWNDPARENT 1
-  ShowWindow $0 0
-  GetDlgItem $0 $HWNDPARENT 2
-  ShowWindow $0 0
-FunctionEnd
-
-Function PageMain
-  nsDialogs::Create 1018
-  Pop $Dialog
-  ${If} $Dialog == error
-    Abort
-  ${EndIf}
-  Call MakeFrameless
-  Call HideWizardButtons
-  System::Call 'user32::SetWindowTextW(p $HWNDPARENT, w "${PRODUCT_NAME} 安装")'
-
-  ; one bitmap covers the whole page: banner on top, white body below
-  ${NSD_CreateBitmap} 0 0 700 500 ""
-  Pop $hBanner
-  ${NSD_SetImage} $hBanner "assets\body.bmp" $hBannerImg
-  System::Call 'user32::GetWindowLongW(p $hBanner, i -16) i .R1'
-  IntOp $R1 $R1 & 0xFFFFFFFE
-  System::Call 'user32::SetWindowLongW(p $hBanner, i -16, i $R1)'
-
-  ${NSD_CreateText} 24 130 520 24 "$INSTDIR"
-  Pop $hDir
-  SetCtlColors $hDir 0x2F2A26 0xFFFFFF
-  System::Call 'user32::InvalidateRect(p $hDir, p 0, i 1)'
-  Push $hDir
-  Call BringToTop
-  Pop $hDir
-
-  StrCpy $MakeShortcut 1
-  StrCpy $RunAfter 1
-
-  ${NSD_CreateBitmap} 24 208 280 20 ""
-  Pop $hShortcut
-  ${NSD_SetImage} $hShortcut "assets\check-shortcut-on.bmp" $hShortcutImg
-  ${NSD_OnClick} $hShortcut OnToggleShortcut
-  Push $hShortcut
-  Call MakeClickable
-  Pop $hShortcut
-  Push $hShortcut
-  Call BringToTop
-  Pop $hShortcut
-
-  ${NSD_CreateBitmap} 24 232 280 20 ""
-  Pop $hRun
-  ${NSD_SetImage} $hRun "assets\check-run-on.bmp" $hRunImg
-  ${NSD_OnClick} $hRun OnToggleRun
-  Push $hRun
-  Call MakeClickable
-  Pop $hRun
-  Push $hRun
-  Call BringToTop
-  Pop $hRun
-
-  ${NSD_CreateBitmap} 446 219 118 36 ""
-  Pop $hInstallBtn
-  ${NSD_SetImage} $hInstallBtn "assets\btn-install.bmp" $hInstallImg
-  ${NSD_OnClick} $hInstallBtn OnInstallClick
-  Push $hInstallBtn
-  Call MakeClickable
-  Pop $hInstallBtn
-  Push $hInstallBtn
-  Call BringToTop
-  Pop $hInstallBtn
-
-  ${NSD_CreateBitmap} 352 219 82 36 ""
-  Pop $hCancelBtn
-  ${NSD_SetImage} $hCancelBtn "assets\btn-cancel.bmp" $hCancelImg
-  ${NSD_OnClick} $hCancelBtn OnCancelClick
-  Push $hCancelBtn
-  Call MakeClickable
-  Pop $hCancelBtn
-  Push $hCancelBtn
-  Call BringToTop
-  Pop $hCancelBtn
-
-  ${NSD_CreateBitmap} 552 10 26 26 ""
-  Pop $hCloseBtn
-  ${NSD_SetImage} $hCloseBtn "assets\btn-close.bmp" $hCloseImg
-  ${NSD_OnClick} $hCloseBtn OnCancelClick
-  Push $hCloseBtn
-  Call MakeClickable
-  Pop $hCloseBtn
-  Push $hCloseBtn
-  Call BringToTop
-  Pop $hCloseBtn
-
-  nsDialogs::Show
-FunctionEnd
-
-Function PageMainLeave
-  ${NSD_GetText} $hDir $0
-  ${If} $0 == ""
-    MessageBox MB_ICONSTOP "$(errNoDir)"
-    Abort
-  ${EndIf}
-  StrCpy $INSTDIR $0
-FunctionEnd
-
-Page custom PageMain PageMainLeave
-Page instfiles
-
+; --- install ----------------------------------------------------------------
 Section "${PRODUCT_NAME}"
   SectionIn RO
   SetShellVarContext current
@@ -243,9 +91,7 @@ Section "${PRODUCT_NAME}"
 
   WriteRegStr HKCU "Software\TCS-Player-Community" "InstallDir" "$INSTDIR"
 
-  ${If} $MakeShortcut == 1
-    CreateShortcut "$DESKTOP\${PRODUCT_NAME}.lnk" "$INSTDIR\${APP_EXE}" "" "$INSTDIR\${APP_EXE}" 0
-  ${EndIf}
+  CreateShortcut "$DESKTOP\${PRODUCT_NAME}.lnk" "$INSTDIR\${APP_EXE}" "" "$INSTDIR\${APP_EXE}" 0
   CreateShortcut "$SMPROGRAMS\${PRODUCT_NAME}.lnk" "$INSTDIR\${APP_EXE}" "" "$INSTDIR\${APP_EXE}" 0
 
   WriteUninstaller "$INSTDIR\Uninstall.exe"
@@ -258,10 +104,6 @@ Section "${PRODUCT_NAME}"
   WriteRegStr HKCU "${UNINST_KEY}" "InstallLocation" "$INSTDIR"
   WriteRegDWORD HKCU "${UNINST_KEY}" "NoModify" 1
   WriteRegDWORD HKCU "${UNINST_KEY}" "NoRepair" 1
-
-  ${If} $RunAfter == 1
-    Exec '"$INSTDIR\${APP_EXE}"'
-  ${EndIf}
 SectionEnd
 
 Section "Uninstall"
@@ -277,15 +119,3 @@ Section "Uninstall"
   DeleteRegKey HKCU "${UNINST_KEY}"
   DeleteRegKey HKCU "Software\TCS-Player-Community"
 SectionEnd
-
-; ---------------------------------------------------------------------------
-!insertmacro MUI_LANGUAGE "SimpChinese"
-!insertmacro MUI_LANGUAGE "English"
-
-LangString optShortcut   ${LANG_SIMPCHINESE} "创建桌面快捷方式"
-LangString optRun        ${LANG_SIMPCHINESE} "安装完成后立即运行"
-LangString errNoDir      ${LANG_SIMPCHINESE} "请填写一个安装位置。"
-
-LangString optShortcut   ${LANG_ENGLISH} "Create a desktop shortcut"
-LangString optRun        ${LANG_ENGLISH} "Launch ${PRODUCT_NAME} when done"
-LangString errNoDir      ${LANG_ENGLISH} "Please choose an install location."
