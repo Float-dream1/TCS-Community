@@ -1,10 +1,9 @@
 <template>
     <NavIconSvg :motion="motion">
-        <g class="blank-sheet">
-            <rect x="4" y="3" width="16" height="18" rx="2" />
-            <line class="blank-line" x1="8" y1="9" x2="16" y2="9" pathLength="1" />
-            <line class="blank-line" x1="8" y1="13" x2="16" y2="13" pathLength="1" />
-            <line class="blank-line" x1="8" y1="17" x2="13" y2="17" pathLength="1" />
+        <g class="forum-bubble">
+            <path d="M4 4.5h16v11h-9.5L4 20.5z" />
+            <line class="forum-line" x1="8" y1="8.5" x2="16" y2="8.5" pathLength="1" />
+            <line class="forum-line" x1="8" y1="12" x2="13" y2="12" pathLength="1" />
         </g>
     </NavIconSvg>
 </template>
@@ -13,7 +12,7 @@
 import { bob, frames, type NavIconMotion, redraw } from './motion'
 import NavIconSvg from './NavIconSvg.vue'
 
-/** The sheet lifts and settles, like a page being put down. */
+/** The bubble lifts and settles, like a message popping in. */
 const lift = frames(
     'transform',
     [
@@ -25,7 +24,7 @@ const lift = frames(
     'ease-out',
 )
 
-/** A click presses the sheet flat, then it springs back. */
+/** A click presses the bubble flat, then it springs back. */
 const press = frames(
     'transform',
     [
@@ -39,17 +38,17 @@ const press = frames(
 )
 
 const motion: NavIconMotion = {
-    '.blank-sheet': {
+    '.forum-bubble': {
         enter: { keyframes: lift, duration: 620 },
         idle: { keyframes: bob((y) => `translateY(${y}px)`, -1), duration: 1200, delay: 560 },
         activate: { keyframes: press, duration: 520 },
     },
-    '.blank-line': { enter: redraw(680) },
+    '.forum-line': { enter: redraw(680) },
 }
 </script>
 
 <style scoped>
-.blank-sheet {
-    transform-origin: 12px 21px;
+.forum-bubble {
+    transform-origin: 12px 20px;
 }
 </style>

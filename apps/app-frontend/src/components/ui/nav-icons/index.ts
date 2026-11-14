@@ -9,9 +9,9 @@
  * on the resting pose and is added on top of the others, so the states hand
  * over to each other without a jump.
  */
-export { default as BlankNavIcon } from './BlankNavIcon.vue'
 export { default as CreateNavIcon } from './CreateNavIcon.vue'
 export { default as DiscoverNavIcon } from './DiscoverNavIcon.vue'
+export { default as ForumNavIcon } from './ForumNavIcon.vue'
 export { default as HomeNavIcon } from './HomeNavIcon.vue'
 export { default as LabNavIcon } from './LabNavIcon.vue'
 export { default as LibraryNavIcon } from './LibraryNavIcon.vue'
@@ -20,4 +20,5 @@ export { default as MultiplayerNavIcon } from './MultiplayerNavIcon.vue'
 export { default as ScreenshotsNavIcon } from './ScreenshotsNavIcon.vue'
 export { default as SettingsNavIcon } from './SettingsNavIcon.vue'
 export { default as SkinsNavIcon } from './SkinsNavIcon.vue'
+export { default as SkinStationNavIcon } from './SkinStationNavIcon.vue'
 export { default as WorldsNavIcon } from './WorldsNavIcon.vue'

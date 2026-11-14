@@ -13,12 +13,21 @@ export const utilityRoutes: RouteRecordRaw[] = [
         },
     },
     {
-        path: '/blank',
-        name: 'Blank',
-        component: () => import('@/pages/Blank.vue'),
+        path: '/forum',
+        name: 'Forum',
+        component: () => import('@/pages/Forum.vue'),
         meta: {
-            breadcrumb: [{ name: 'Blank' }],
-            discordActivity: 'Idling...',
+            breadcrumb: [{ name: 'Forum' }],
+            discordActivity: 'Reading the forum',
+        },
+    },
+    {
+        path: '/skin-station',
+        name: 'SkinStation',
+        component: () => import('@/pages/SkinStation.vue'),
+        meta: {
+            breadcrumb: [{ name: 'Skin station' }],
+            discordActivity: 'Browsing skins',
         },
     },
     {

@@ -84,9 +84,9 @@ import ModpackAlreadyInstalledModal from '@/components/ui/modal/ModpackAlreadyIn
 import ModpackInstallModal from '@/components/ui/modal/ModpackInstallModal.vue'
 import PrivacyConsentModal from '@/components/ui/modal/PrivacyConsentModal.vue'
 import {
-    BlankNavIcon,
     CreateNavIcon,
     DiscoverNavIcon,
+    ForumNavIcon,
     HomeNavIcon,
     LabNavIcon,
     LibraryNavIcon,
@@ -94,6 +94,7 @@ import {
     ScreenshotsNavIcon,
     SettingsNavIcon,
     SkinsNavIcon,
+    SkinStationNavIcon,
     WorldsNavIcon,
 } from '@/components/ui/nav-icons'
 import NavButton from '@/components/ui/NavButton.vue'
@@ -1205,9 +1206,13 @@ const messages = defineMessages({
         id: 'app.navigation.lab',
         defaultMessage: 'Lab',
     },
-    blankPage: {
-        id: 'app.navigation.blank',
-        defaultMessage: 'Blank page',
+    forumPage: {
+        id: 'app.navigation.forum',
+        defaultMessage: 'Forum',
+    },
+    skinStationPage: {
+        id: 'app.navigation.skin-station',
+        defaultMessage: 'Skin station',
     },
     createInstance: {
         id: 'app.navigation.create-instance',
@@ -3227,12 +3232,20 @@ provideAppUpdateDownloadProgress(appUpdateDownload)
                     </span>
                 </NavButton>
                 <NavButton
-                    v-if="!themeStore.isNavItemHidden('blank')"
-                    v-tooltip.right="formatMessage(messages.blankPage)"
-                    to="/blank"
-                    :is-primary="(r) => r.path.startsWith('/blank')"
+                    v-if="!themeStore.isNavItemHidden('forum')"
+                    v-tooltip.right="formatMessage(messages.forumPage)"
+                    to="/forum"
+                    :is-primary="(r) => r.path.startsWith('/forum')"
                 >
-                    <BlankNavIcon />
+                    <ForumNavIcon />
+                </NavButton>
+                <NavButton
+                    v-if="!themeStore.isNavItemHidden('skin-station')"
+                    v-tooltip.right="formatMessage(messages.skinStationPage)"
+                    to="/skin-station"
+                    :is-primary="(r) => r.path.startsWith('/skin-station')"
+                >
+                    <SkinStationNavIcon />
                 </NavButton>
             </NavRail>
             <div class="h-px w-6 mx-auto my-2 bg-surface-5"></div>

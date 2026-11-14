@@ -4,7 +4,6 @@ import { Button, defineMessages, injectNotificationManager, NavTabs, useVIntl } 
 import { onUnmounted, shallowRef } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
-import { NewInstanceImage } from '@/assets/icons'
 import { DIRECT_LINKS_CHANGED_EVENT } from '@/helpers/direct-link-sync'
 import { instance_groups_listener, instance_listener } from '@/helpers/events.js'
 import { list } from '@/helpers/instance'
@@ -72,9 +71,6 @@ onUnmounted(() => {
             <RouterView v-if="route.path.startsWith('/library')" :instances="instances" />
         </template>
         <div v-else class="no-instance flex flex-col items-center justify-center h-full gap-3">
-            <div class="icon">
-                <NewInstanceImage />
-            </div>
             <h3>{{ formatMessage(messages.noInstances) }}</h3>
             <Button type="colored" color="brand" @click="router.push('/create')"
                 ><PlusIcon />
@@ -89,13 +85,6 @@ onUnmounted(() => {
     p,
     h3 {
         margin: 0;
-    }
-
-    .icon {
-        svg {
-            width: 10rem;
-            height: 10rem;
-        }
     }
 }
 </style>

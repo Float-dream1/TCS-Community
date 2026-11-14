@@ -12950,9 +12950,6 @@
   "app.multiplayer.verifying": {
     "message": "Verifying..."
   },
-  "app.navigation.blank": {
-    "message": "Blank page"
-  },
   "app.navigation.create-instance": {
     "message": "Create new instance"
   },
@@ -12968,6 +12965,9 @@
   "app.navigation.forward": {
     "message": "Forward"
   },
+  "app.navigation.forum": {
+    "message": "Forum"
+  },
   "app.navigation.home": {
     "message": "Home"
   },
@@ -12982,6 +12982,9 @@
   },
   "app.navigation.screenshots": {
     "message": "Screenshots"
+  },
+  "app.navigation.skin-station": {
+    "message": "Skin station"
   },
   "app.navigation.skin-selector": {
     "message": "Skin selector"

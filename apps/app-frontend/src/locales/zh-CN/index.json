@@ -12950,9 +12950,6 @@
   "app.multiplayer.verifying": {
     "message": "验证中..."
   },
-  "app.navigation.blank": {
-    "message": "空白页"
-  },
   "app.navigation.create-instance": {
     "message": "创建新实例"
   },
@@ -12968,6 +12965,9 @@
   "app.navigation.forward": {
     "message": "前进"
   },
+  "app.navigation.forum": {
+    "message": "论坛"
+  },
   "app.navigation.home": {
     "message": "主页"
   },
@@ -12982,6 +12982,9 @@
   },
   "app.navigation.screenshots": {
     "message": "截图中心"
+  },
+  "app.navigation.skin-station": {
+    "message": "皮肤站"
   },
   "app.navigation.skin-selector": {
     "message": "皮肤选择器"

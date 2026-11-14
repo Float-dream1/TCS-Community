@@ -1,7 +1,7 @@
 <script setup lang="ts">
-// This page embeds the community site, so this fork has its own entry point in
+// This page embeds the community forum, so this fork has its own entry point in
 // the navigation rail instead of a truly empty route.
-defineOptions({ name: 'Blank' })
+defineOptions({ name: 'Forum' })
 
 const COMMUNITY_URL = 'https://www.tcscraft.com/all'
 </script>
