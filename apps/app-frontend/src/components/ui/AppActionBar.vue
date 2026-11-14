@@ -99,6 +99,62 @@
                 class="absolute right-0 top-0 size-2 rounded-full bg-red ring-2 ring-bg-raised"
             />
         </Button>
+        <PopoutMenu v-if="availableRelease" placement="bottom-end">
+            <template #trigger>
+                <Button
+                    v-tooltip="
+                        formatMessage(messages.launcherUpdateAvailable, {
+                            version: availableRelease.version,
+                        })
+                    "
+                    type="quiet"
+                    circular
+                    icon-only
+                    :aria-label="
+                        formatMessage(messages.launcherUpdateAvailable, {
+                            version: availableRelease.version,
+                        })
+                    "
+                    class="relative"
+                    ><DownloadIcon />
+                    <span
+                        class="absolute right-0 top-0 size-2 rounded-full bg-brand ring-2 ring-bg-raised"
+                    />
+                </Button>
+            </template>
+            <template #menu="{ hide }">
+                <div class="w-[20rem] max-w-[calc(100vw-2rem)] p-2">
+                    <div class="px-2 pb-2">
+                        <div class="font-semibold text-[var(--color-text-primary)]">
+                            {{ formatMessage(messages.launcherUpdateTitle) }}
+                        </div>
+                        <p class="mt-1 text-xs text-[var(--color-text-tertiary)]">
+                            {{
+                                formatMessage(messages.launcherUpdateBody, {
+                                    current: currentVersion,
+                                    version: availableRelease.version,
+                                })
+                            }}
+                        </p>
+                    </div>
+                    <div class="flex flex-wrap gap-2 px-2">
+                        <Button type="brand" @click="runPopoutAction(hide, openLauncherRelease)">
+                            {{ formatMessage(messages.launcherUpdateOpen) }}
+                        </Button>
+                        <Button
+                            type="quiet"
+                            @click="
+                                runPopoutAction(hide, () =>
+                                    skipLauncherRelease(availableRelease.version),
+                                )
+                            "
+                        >
+                            {{ formatMessage(messages.launcherUpdateSkip) }}
+                        </Button>
+                    </div>
+                </div>
+            </template>
+        </PopoutMenu>
         <DownloadCenterButton />
         <PopoutMenu v-if="activeBackupOperations.length > 0" placement="bottom-end">
             <template #trigger>
@@ -285,6 +341,7 @@
 import {
     BellIcon,
     DatabaseBackupIcon,
+    DownloadIcon,
     DropdownIcon,
     NewspaperIcon,
     OnlineIndicatorIcon,
@@ -306,11 +363,17 @@ import {
     type WebNotification,
 } from '@modrinth/ui'
 import { convertFileSrc } from '@tauri-apps/api/core'
+import { openUrl } from '@tauri-apps/plugin-opener'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 import DownloadCenterButton from '@/components/ui/DownloadCenterButton.vue'
 import { useInstallJobNotifications } from '@/composables/browse/install-job-notifications'
+import {
+    startLauncherReleaseChecks,
+    stopLauncherReleaseChecks,
+    useLauncherRelease,
+} from '@/composables/use-launcher-release'
 import { useNetworkStatus } from '@/composables/useNetworkStatus'
 import { trackEvent } from '@/helpers/analytics'
 import { loading_listener, process_listener } from '@/helpers/events'
@@ -456,6 +519,17 @@ const showInstances = ref(false)
 const notificationCenterShown = ref(false)
 const announcementUnreadCount = ref(0)
 
+const { availableRelease, currentVersion, skipRelease: skipLauncherRelease } = useLauncherRelease()
+
+function openLauncherRelease() {
+    const release = availableRelease.value
+    if (!release) {
+        return
+    }
+
+    void openUrl(release.url)
+}
+
 function openAnnouncementCenter() {
     window.dispatchEvent(new CustomEvent(OPEN_REMOTE_ANNOUNCEMENT_CENTER_EVENT))
 }
@@ -467,9 +541,11 @@ function updateAnnouncementCount(event: Event) {
 
 onMounted(() => {
     window.addEventListener(REMOTE_ANNOUNCEMENTS_UPDATED_EVENT, updateAnnouncementCount)
+    startLauncherReleaseChecks()
 })
 onBeforeUnmount(() => {
     window.removeEventListener(REMOTE_ANNOUNCEMENTS_UPDATED_EVENT, updateAnnouncementCount)
+    stopLauncherReleaseChecks()
 })
 
 interface RunningProcess {
@@ -529,6 +605,26 @@ const messages = defineMessages({
     announcements: {
         id: 'app.action-bar.announcements',
         defaultMessage: 'Announcements',
+    },
+    launcherUpdateAvailable: {
+        id: 'app.action-bar.launcher-update-available',
+        defaultMessage: 'Version {version} of the launcher is available',
+    },
+    launcherUpdateTitle: {
+        id: 'app.action-bar.launcher-update-title',
+        defaultMessage: 'A newer launcher is available',
+    },
+    launcherUpdateBody: {
+        id: 'app.action-bar.launcher-update-body',
+        defaultMessage: 'You are on {current}, the newest release is {version}.',
+    },
+    launcherUpdateOpen: {
+        id: 'app.action-bar.launcher-update-open',
+        defaultMessage: 'Open download page',
+    },
+    launcherUpdateSkip: {
+        id: 'app.action-bar.launcher-update-skip',
+        defaultMessage: 'Skip this version',
     },
     clearNotifications: {
         id: 'app.action-bar.notifications.clear',
