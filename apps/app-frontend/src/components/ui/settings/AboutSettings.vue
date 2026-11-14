@@ -12,7 +12,9 @@ const { formatMessage } = useVIntl()
 const version = ref('')
 const replayOobe = inject<() => void>('replayOobe')
 
-const licenseUrl = `${AxolotlBrandConfig.repositoryUrl}/blob/main/LICENSE`
+const repositoryUrl = AxolotlBrandConfig.repositoryUrl
+// The repository has no standalone LICENSE file; the GPL-3.0 text lives upstream.
+const licenseUrl = 'https://www.gnu.org/licenses/gpl-3.0.html'
 const copyingUrl = `${AxolotlBrandConfig.repositoryUrl}/blob/main/COPYING.md`
 const thirdPartyLicensesUrl = `${AxolotlBrandConfig.repositoryUrl}/tree/main/third-party/licenses`
 
@@ -50,12 +52,16 @@ const messages = defineMessages({
     attribution: {
         id: 'app.settings.about.attribution',
         defaultMessage:
-            'TaCraft Player Community is a modified version of the open-source Modrinth codebase.',
+            'TCS-Community is a modified version of the open-source Axolotl Launcher project.',
     },
     notAffiliated: {
         id: 'app.settings.about.not-affiliated',
         defaultMessage:
-            'Modrinth is a trademark of Rinth, Inc. TaCraft Player Community is not affiliated with or endorsed by Rinth, Inc.',
+            'Modrinth is a trademark of Rinth, Inc. TCS-Community is not affiliated with or endorsed by Rinth, Inc.',
+    },
+    sourceRepository: {
+        id: 'app.settings.about.source-repository',
+        defaultMessage: 'Source repository',
     },
     originalSource: {
         id: 'app.settings.about.original-source',
@@ -113,6 +119,15 @@ const messages = defineMessages({
                     {{ formatMessage(messages.notAffiliated) }}
                 </p>
                 <div class="mt-3 flex flex-wrap gap-2">
+                    <a
+                        :href="repositoryUrl"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="inline-flex items-center gap-2 rounded-lg bg-surface-4 px-3 py-2 text-sm font-semibold text-[var(--color-text-primary)] transition-colors hover:bg-surface-5"
+                    >
+                        {{ formatMessage(messages.sourceRepository) }}
+                        <ExternalIcon class="size-4 text-[var(--color-text-tertiary)]" />
+                    </a>
                     <a
                         :href="licenseUrl"
                         target="_blank"

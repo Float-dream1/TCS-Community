@@ -44,7 +44,6 @@ import HomeDailyChallenge from '@/components/home/HomeDailyChallenge.vue'
 import HomeDashboard from '@/components/home/HomeDashboard.vue'
 import HomeGreetingAccountModal from '@/components/home/HomeGreetingAccountModal.vue'
 import HomeInstancePickerModal from '@/components/home/HomeInstancePickerModal.vue'
-import HomeMinecraftNews from '@/components/home/HomeMinecraftNews.vue'
 import HomeMinimal from '@/components/home/HomeMinimal.vue'
 import HomeMinimalCustomizer from '@/components/home/HomeMinimalCustomizer.vue'
 import HomePlayInsights from '@/components/home/HomePlayInsights.vue'
@@ -598,7 +597,6 @@ if (!instancesLoaded || instances.value.length > 0) void fetchPlayerName()
         >
             <HomePlayInsights />
             <HomeDailyChallenge />
-            <HomeMinecraftNews />
         </div>
     </Teleport>
 </template>

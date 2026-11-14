@@ -3,7 +3,6 @@ import {
     CheckIcon,
     ChevronRightIcon,
     GlobeIcon,
-    LockIcon,
     LogInIcon,
     SpinnerIcon,
     UserIcon,
@@ -25,7 +24,6 @@ import {
 } from '@/composables/useAntiPiracyStatus'
 import { useNetworkStatus } from '@/composables/useNetworkStatus'
 import {
-    add_offline_user,
     begin_yggdrasil_login,
     delete_yggdrasil_password,
     finish_yggdrasil_login,
@@ -44,9 +42,9 @@ type YggdrasilProfile = { id: string; name: string }
 type YggdrasilLoginResult =
     | { status: 'complete'; credentials: Account }
     | { status: 'select_profile'; flow_id: string; profiles: YggdrasilProfile[] }
-type Method = 'microsoft' | 'yggdrasil' | 'offline'
+type Method = 'microsoft' | 'yggdrasil'
 
-const LITTLE_SKIN_API_ROOT = 'https://littleskin.cn/api/yggdrasil'
+const DEFAULT_YGGDRASIL_API_ROOT = 'https://tcsskins.tcscraft.com/api/yggdrasil'
 
 const { formatMessage } = useVIntl()
 const { handleError } = injectNotificationManager()
@@ -68,53 +66,22 @@ const messages = defineMessages({
     yggdrasil: { id: 'app.oobe.account.third-party', defaultMessage: 'Third-party account' },
     yggdrasilDetail: {
         id: 'app.oobe.account.third-party-detail',
-        defaultMessage: 'LittleSkin or another Yggdrasil authentication service.',
-    },
-    offline: { id: 'app.oobe.account.offline', defaultMessage: 'Offline account' },
-    offlineDetail: {
-        id: 'app.oobe.account.offline-detail',
-        defaultMessage: 'Just a player name. Only works on servers that allow offline players.',
-    },
-    offlineRestricted: {
-        id: 'app.oobe.account.offline-restricted',
-        defaultMessage: 'Sign in with a Microsoft account on this device first.',
+        defaultMessage: 'TCS Skin Station or another compatible Yggdrasil authentication service.',
     },
     networkOffline: {
         id: 'minecraft-account.offline-mode.description',
         defaultMessage:
             'Only offline accounts are available. You can launch fully downloaded instances.',
     },
-    add: { id: 'app.oobe.account.add', defaultMessage: 'Add' },
     loginTrouble: { id: 'minecraft-login.trouble', defaultMessage: 'Having trouble?' },
     loginBrowser: { id: 'minecraft-login.browser', defaultMessage: 'Use browser login' },
     loginDeviceCode: { id: 'minecraft-login.device-code', defaultMessage: 'Use device code' },
     officialBadge: { id: 'minecraft-account.official-badge', defaultMessage: 'Official' },
     offlineBadge: { id: 'minecraft-account.offline-badge', defaultMessage: 'Offline' },
     thirdPartyBadge: { id: 'minecraft-account.third-party-badge', defaultMessage: 'Third-party' },
-    usernameLabel: {
-        id: 'minecraft-account.offline-modal.username-label',
-        defaultMessage: 'Minecraft username',
-    },
-    usernamePlaceholder: {
-        id: 'minecraft-account.offline-modal.username-placeholder',
-        defaultMessage: 'Enter a username',
-    },
-    usernameValidation: {
-        id: 'minecraft-account.offline-modal.username-validation',
-        defaultMessage: 'Use 1–16 letters, numbers, or underscores, including Chinese characters.',
-    },
-    chineseUsernameWarning: {
-        id: 'minecraft-account.offline-modal.chinese-username-warning',
-        defaultMessage:
-            'Minecraft 1.18 and newer may reject Chinese usernames when entering singleplayer worlds or servers. Use this account with an older version, or choose an English username for newer versions.',
-    },
     apiRootLabel: {
         id: 'minecraft-account.third-party-modal.api-root',
         defaultMessage: 'Yggdrasil API address',
-    },
-    useLittleSkin: {
-        id: 'minecraft-account.third-party-modal.littleskin',
-        defaultMessage: 'Use LittleSkin',
     },
     accountLabel: {
         id: 'minecraft-account.third-party-modal.account',
@@ -145,11 +112,7 @@ showPicked(undefined)
 const open = ref<Exclude<Method, 'microsoft'> | null>(null)
 const working = ref<Method | null>(null)
 
-const username = ref('')
-const usernameValid = computed(() => /^[\p{L}\p{N}_]{1,16}$/u.test(username.value.trim()))
-const usernameHasHan = computed(() => /\p{Script=Han}/u.test(username.value.trim()))
-
-const apiRoot = ref(LITTLE_SKIN_API_ROOT)
+const apiRoot = ref(DEFAULT_YGGDRASIL_API_ROOT)
 const login = ref('')
 const password = ref('')
 const remember = ref(true)
@@ -237,30 +200,7 @@ async function signInMicrosoft() {
 }
 
 function toggle(method: Exclude<Method, 'microsoft'>) {
-    if (method === 'offline' && antiPiracy.value.restricted) {
-        errorStore.showAntiPiracyNotice()
-        return
-    }
     open.value = open.value === method ? null : method
-}
-
-async function addOffline() {
-    if (!usernameValid.value || working.value) return
-    if (antiPiracy.value.restricted) {
-        errorStore.showAntiPiracyNotice()
-        return
-    }
-    working.value = 'offline'
-    try {
-        const account = (await add_offline_user(username.value.trim())) as unknown as Account
-        await adopt(account)
-        username.value = ''
-    } catch (error) {
-        if (isOfflineAccountRestrictedError(error)) errorStore.showAntiPiracyNotice()
-        else handleError(error as Error)
-    } finally {
-        working.value = null
-    }
 }
 
 /** Saves the login, or forgets one saved before, as the checkbox says; the account menu does the same. */
@@ -454,14 +394,6 @@ async function chooseProfile(profile: YggdrasilProfile) {
                         <label class="flex flex-col gap-1.5 text-sm font-semibold">
                             <span class="flex items-center justify-between">
                                 {{ formatMessage(messages.apiRootLabel) }}
-                                <button
-                                    v-if="apiRoot !== LITTLE_SKIN_API_ROOT"
-                                    type="button"
-                                    class="cursor-pointer border-0 bg-transparent p-0 text-sm font-medium text-brand"
-                                    @click="apiRoot = LITTLE_SKIN_API_ROOT"
-                                >
-                                    {{ formatMessage(messages.useLittleSkin) }}
-                                </button>
                             </span>
                             <StyledInput
                                 v-model="apiRoot"
@@ -508,78 +440,6 @@ async function chooseProfile(profile: YggdrasilProfile) {
                             </Button>
                         </div>
                     </template>
-                </div>
-            </div>
-
-            <div class="flex flex-col">
-                <OobeChoice
-                    :disabled="working !== null && working !== 'offline'"
-                    :aria-expanded="open === 'offline'"
-                    @select="toggle('offline')"
-                >
-                    <template #leading>
-                        <span
-                            class="flex size-9 shrink-0 items-center justify-center rounded-full bg-surface-4 text-[var(--color-text-primary)]"
-                        >
-                            <LockIcon v-if="antiPiracy.restricted" class="size-4" />
-                            <UserIcon v-else class="size-4" />
-                        </span>
-                    </template>
-                    <span class="font-semibold text-[var(--color-text-primary)]">
-                        {{ formatMessage(messages.offline) }}
-                    </span>
-                    <span class="text-sm text-[var(--color-text-tertiary)]">
-                        {{
-                            formatMessage(
-                                antiPiracy.restricted
-                                    ? messages.offlineRestricted
-                                    : messages.offlineDetail,
-                            )
-                        }}
-                    </span>
-                    <template #trailing>
-                        <ChevronRightIcon
-                            class="size-5 shrink-0 text-[var(--color-text-tertiary)] transition-transform"
-                            :class="{ 'rotate-90': open === 'offline' }"
-                        />
-                    </template>
-                </OobeChoice>
-                <div
-                    v-if="open === 'offline'"
-                    class="oobe-reveal mt-1.5 flex flex-col gap-2 rounded-[var(--radius-lg)] border border-solid border-surface-4 bg-surface-2.5 p-4"
-                >
-                    <label class="flex flex-col gap-1.5 text-sm font-semibold">
-                        {{ formatMessage(messages.usernameLabel) }}
-                        <span class="flex gap-2">
-                            <StyledInput
-                                v-model="username"
-                                class="flex-1"
-                                autocomplete="off"
-                                :maxlength="16"
-                                :placeholder="formatMessage(messages.usernamePlaceholder)"
-                                :disabled="working !== null"
-                                @keyup.enter="addOffline"
-                            />
-                            <Button
-                                type="colored"
-                                color="brand"
-                                :disabled="!usernameValid || working !== null"
-                                @click="addOffline"
-                            >
-                                <SpinnerIcon v-if="working === 'offline'" class="animate-spin" />
-                                {{ formatMessage(messages.add) }}
-                            </Button>
-                        </span>
-                    </label>
-                    <p v-if="username.length > 0 && !usernameValid" class="m-0 text-sm text-red">
-                        {{ formatMessage(messages.usernameValidation) }}
-                    </p>
-                    <p
-                        v-if="usernameHasHan"
-                        class="m-0 rounded-[var(--radius-md)] border border-solid border-orange bg-highlight-orange p-3 text-sm text-[var(--color-text-primary)]"
-                    >
-                        {{ formatMessage(messages.chineseUsernameWarning) }}
-                    </p>
                 </div>
             </div>
         </section>

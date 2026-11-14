@@ -417,8 +417,6 @@ const messages = defineMessages({
     navScreenshots: { id: 'app.navigation.screenshots', defaultMessage: 'Screenshots' },
     navLibrary: { id: 'app.navigation.library', defaultMessage: 'Library' },
     navWorlds: { id: 'app.navigation.worlds', defaultMessage: 'Worlds' },
-    navMultiplayer: { id: 'app.navigation.multiplayer', defaultMessage: 'Multiplayer' },
-    navSkins: { id: 'app.navigation.skin-selector', defaultMessage: 'Skin selector' },
     navLab: { id: 'app.navigation.lab', defaultMessage: 'Lab' },
     fontsTitle: { id: 'app.appearance-settings.fonts.title', defaultMessage: 'Fonts' },
     fontsDescription: {
@@ -515,8 +513,6 @@ const NAV_TREE_ITEMS: NavTreeItem[] = [
     { id: 'screenshots', label: messages.navScreenshots, group: 'browse' },
     { id: 'library', label: messages.navLibrary, group: 'play' },
     { id: 'worlds', label: messages.navWorlds, group: 'play' },
-    { id: 'multiplayer', label: messages.navMultiplayer, group: 'play' },
-    { id: 'skins', label: messages.navSkins, group: 'play' },
     { id: 'lab', label: messages.navLab, group: 'tools' },
 ]
 

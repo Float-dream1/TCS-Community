@@ -4,10 +4,10 @@ import { getVisibleSettingsCategoryDefinitions } from '@/components/ui/settings/
 
 import { resolveSettingsRoute } from './deep-links'
 
-it('opens the third-party account screen when handling an OAuth settings callback', () => {
+it('falls back to the default screen for an OAuth callback to a removed settings page', () => {
     expect(resolveSettingsRoute('third-party-accounts')).toEqual({
         path: '/settings',
-        hash: '#third-party-accounts',
+        hash: '#interface',
         entry: undefined,
     })
 })

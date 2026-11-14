@@ -896,6 +896,12 @@
   "app.backup-exit.tray": {
     "message": "Hide to tray"
   },
+  "app.breadcrumb.forum": {
+    "message": "Community"
+  },
+  "app.breadcrumb.skin-station": {
+    "message": "Skin station"
+  },
   "app.browse.add": {
     "message": "Add"
   },
@@ -12962,11 +12968,11 @@
   "app.navigation.edit-world": {
     "message": "Edit world"
   },
-  "app.navigation.forward": {
-    "message": "Forward"
-  },
   "app.navigation.forum": {
     "message": "Forum"
+  },
+  "app.navigation.forward": {
+    "message": "Forward"
   },
   "app.navigation.home": {
     "message": "Home"
@@ -12983,11 +12989,11 @@
   "app.navigation.screenshots": {
     "message": "Screenshots"
   },
-  "app.navigation.skin-station": {
-    "message": "Skin station"
-  },
   "app.navigation.skin-selector": {
     "message": "Skin selector"
+  },
+  "app.navigation.skin-station": {
+    "message": "Skin station"
   },
   "app.navigation.worlds": {
     "message": "Worlds"
@@ -13059,7 +13065,7 @@
     "message": "Third-party account"
   },
   "app.oobe.account.third-party-detail": {
-    "message": "LittleSkin or another Yggdrasil authentication service."
+    "message": "TCS Skin Station or another compatible Yggdrasil authentication service."
   },
   "app.oobe.account.title": {
     "message": "Who is using the launcher?"
@@ -15108,7 +15114,7 @@
     "message": "Help support continued development"
   },
   "app.settings.about.attribution": {
-    "message": "TaCraft Player Community is a modified version of the open-source Modrinth codebase."
+    "message": "TCS-Community is a modified version of the open-source Axolotl Launcher project."
   },
   "app.settings.about.community-support": {
     "message": "Project & community"
@@ -15207,7 +15213,7 @@
     "message": "License & attribution"
   },
   "app.settings.about.not-affiliated": {
-    "message": "Modrinth is a trademark of Rinth, Inc. TaCraft Player Community is not affiliated with or endorsed by Rinth, Inc."
+    "message": "Modrinth is a trademark of Rinth, Inc. TCS-Community is not affiliated with or endorsed by Rinth, Inc."
   },
   "app.settings.about.original-source": {
     "message": "Original Modrinth source"
@@ -15328,6 +15334,9 @@
   },
   "app.settings.about.run.totem": {
     "message": "Totem of Undying"
+  },
+  "app.settings.about.source-repository": {
+    "message": "Source repository"
   },
   "app.settings.about.test-error": {
     "message": "Trigger test error"

@@ -149,6 +149,8 @@ const messages = defineMessages({
     screenshots: { id: 'app.navigation.screenshots', defaultMessage: 'Screenshots' },
     editWorld: { id: 'app.navigation.edit-world', defaultMessage: 'Edit world' },
     upgradeInstance: { id: 'app.instance.upgrade-instance', defaultMessage: 'Upgrade instance' },
+    forum: { id: 'app.breadcrumb.forum', defaultMessage: 'Community' },
+    skinStation: { id: 'app.breadcrumb.skin-station', defaultMessage: 'Skin station' },
 })
 
 const staticLabels = {
@@ -173,6 +175,8 @@ const staticLabels = {
     Screenshots: messages.screenshots,
     'Edit world': messages.editWorld,
     Upgrade: messages.upgradeInstance,
+    Forum: messages.forum,
+    'Skin station': messages.skinStation,
 }
 
 const staticIcons: Record<string, Component> = {

@@ -77,16 +77,6 @@ export function resolveOpenRoute(path: string, query?: string | null) {
         }
         return null
     }
-    if (path.startsWith('/multiplayer')) {
-        if (
-            path === '/multiplayer/servers' ||
-            path === '/multiplayer/rooms' ||
-            path.startsWith('/multiplayer/servers/')
-        ) {
-            return route(path, query)
-        }
-        return null
-    }
     if (path.startsWith('/lab')) {
         const tail = path.slice('/lab'.length)
         if (tail === '' || [...LAB_TOOLS].some((tool) => tail === `/${tool}`)) {
@@ -94,9 +84,7 @@ export function resolveOpenRoute(path: string, query?: string | null) {
         }
         return null
     }
-    if (
-        ['/downloads', '/create', '/skins', '/worlds', '/screenshots', '/help/drop'].includes(path)
-    ) {
+    if (['/downloads', '/create', '/worlds', '/screenshots', '/help/drop'].includes(path)) {
         return route(path, query)
     }
     return null

@@ -90,10 +90,8 @@ import {
     HomeNavIcon,
     LabNavIcon,
     LibraryNavIcon,
-    MultiplayerNavIcon,
     ScreenshotsNavIcon,
     SettingsNavIcon,
-    SkinsNavIcon,
     SkinStationNavIcon,
     WorldsNavIcon,
 } from '@/components/ui/nav-icons'
@@ -237,7 +235,6 @@ const themeStore = useTheming()
 const { hasModal } = useModalStack()
 const router = useRouter()
 const route = useRoute()
-const onSkinsPage = computed(() => route.path === '/skins')
 const onSchematicWorkshopPage = computed(() => route.path === '/lab/schematic-preview')
 const onSettingsPage = computed(() => route.path.startsWith('/settings'))
 const isSchematicFile = (path: string) => /\.(litematic|schematic|schem)$/i.test(path)
@@ -1182,17 +1179,9 @@ const messages = defineMessages({
         id: 'app.navigation.discover-content',
         defaultMessage: 'Discover content',
     },
-    skinSelector: {
-        id: 'app.navigation.skin-selector',
-        defaultMessage: 'Skin selector',
-    },
     library: {
         id: 'app.navigation.library',
         defaultMessage: 'Library',
-    },
-    multiplayer: {
-        id: 'app.navigation.multiplayer',
-        defaultMessage: 'Multiplayer',
     },
     downloads: {
         id: 'app.navigation.downloads',
@@ -2344,7 +2333,6 @@ const dropImport = useDropImport({
     installModpackFromPath,
     contentInstall,
     fileDrop,
-    onSkinsPage,
     onSchematicWorkshopPage,
     onSettingsPage,
     isSchematicFile,
@@ -3172,21 +3160,6 @@ provideAppUpdateDownloadProgress(appUpdateDownload)
                     <DiscoverNavIcon />
                 </NavButton>
                 <NavButton
-                    v-if="!themeStore.isNavItemHidden('skins')"
-                    v-tooltip.right="formatMessage(messages.skinSelector)"
-                    to="/skins"
-                >
-                    <SkinsNavIcon />
-                </NavButton>
-                <NavButton
-                    v-if="!themeStore.isNavItemHidden('multiplayer')"
-                    v-tooltip.right="formatMessage(messages.multiplayer)"
-                    to="/multiplayer"
-                    :is-primary="(r) => r.path.startsWith('/multiplayer')"
-                >
-                    <MultiplayerNavIcon />
-                </NavButton>
-                <NavButton
                     v-if="!themeStore.isNavItemHidden('library')"
                     v-tooltip.right="formatMessage(messages.library)"
                     to="/library"
@@ -3281,8 +3254,7 @@ provideAppUpdateDownloadProgress(appUpdateDownload)
         :class="{
             invisible: oobeVisible,
             'sidebar-enabled': sidebarVisible,
-            'studio-mode':
-                route.name === 'FileStudio' || route.name === 'MultiplayerServerFileStudio',
+            'studio-mode': route.name === 'FileStudio',
             'disable-advanced-rendering': !themeStore.advancedRendering,
             'has-custom-background':
                 themeStore.customBackgroundPath && !themeStore.transparentBackground,
@@ -3582,7 +3554,7 @@ provideAppUpdateDownloadProgress(appUpdateDownload)
 
     <!-- Global drop overlay -->
     <div
-        v-if="isDragging && !onSkinsPage && !onSettingsPage"
+        v-if="isDragging && !onSettingsPage"
         class="fixed inset-0 z-[9999] bg-black/40 flex items-center justify-center pointer-events-none"
     >
         <div
@@ -3599,13 +3571,7 @@ provideAppUpdateDownloadProgress(appUpdateDownload)
 
     <!-- Processing overlay -->
     <div
-        v-if="
-            (isProcessing || scanningInstances) &&
-            !isDragging &&
-            !onSkinsPage &&
-            !onSettingsPage &&
-            !batchActive
-        "
+        v-if="(isProcessing || scanningInstances) && !isDragging && !onSettingsPage && !batchActive"
         class="fixed inset-0 z-[9999] bg-black/20 flex items-center justify-center"
     >
         <div class="flex flex-col items-center gap-3">

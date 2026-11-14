@@ -896,6 +896,12 @@
   "app.backup-exit.tray": {
     "message": "隐藏到托盘"
   },
+  "app.breadcrumb.forum": {
+    "message": "橘服社区"
+  },
+  "app.breadcrumb.skin-station": {
+    "message": "皮肤站"
+  },
   "app.browse.add": {
     "message": "添加"
   },
@@ -12962,11 +12968,11 @@
   "app.navigation.edit-world": {
     "message": "编辑存档"
   },
-  "app.navigation.forward": {
-    "message": "前进"
-  },
   "app.navigation.forum": {
     "message": "论坛"
+  },
+  "app.navigation.forward": {
+    "message": "前进"
   },
   "app.navigation.home": {
     "message": "主页"
@@ -12983,11 +12989,11 @@
   "app.navigation.screenshots": {
     "message": "截图中心"
   },
-  "app.navigation.skin-station": {
-    "message": "皮肤站"
-  },
   "app.navigation.skin-selector": {
     "message": "皮肤选择器"
+  },
+  "app.navigation.skin-station": {
+    "message": "皮肤站"
   },
   "app.navigation.worlds": {
     "message": "世界"
@@ -13059,7 +13065,7 @@
     "message": "第三方账户"
   },
   "app.oobe.account.third-party-detail": {
-    "message": "LittleSkin 或其他 Yggdrasil 外置登录服务。"
+    "message": "橘服皮肤站或其他兼容的 Yggdrasil 外置登录服务。"
   },
   "app.oobe.account.title": {
     "message": "是谁正在使用启动器？"
@@ -15108,7 +15114,7 @@
     "message": "支持项目持续开发"
   },
   "app.settings.about.attribution": {
-    "message": "Axolotl Launcher 是开源项目 Modrinth 代码库的修改版本。"
+    "message": "TCS-Community 是开源项目 Axolotl Launcher 的修改版本。"
   },
   "app.settings.about.community-support": {
     "message": "项目与社区"
@@ -15207,7 +15213,7 @@
     "message": "许可证与来源声明"
   },
   "app.settings.about.not-affiliated": {
-    "message": "Modrinth 是 Rinth, Inc. 的商标。Axolotl Launcher 与 Rinth, Inc. 无关联，亦未获得其认可。"
+    "message": "Modrinth 是 Rinth, Inc. 的商标。TCS-Community 与 Rinth, Inc. 无关联，亦未获得其认可。"
   },
   "app.settings.about.original-source": {
     "message": "Modrinth 原始源代码"
@@ -15328,6 +15334,9 @@
   },
   "app.settings.about.run.totem": {
     "message": "不死图腾"
+  },
+  "app.settings.about.source-repository": {
+    "message": "源代码仓库"
   },
   "app.settings.about.test-error": {
     "message": "触发测试错误"

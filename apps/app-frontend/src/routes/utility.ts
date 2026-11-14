@@ -55,15 +55,6 @@ export const utilityRoutes: RouteRecordRaw[] = [
         },
     },
     {
-        path: '/skins',
-        name: 'SkinSelector',
-        component: () => import('@/pages/Skins.vue'),
-        meta: {
-            breadcrumb: [{ name: 'Skin selector' }],
-            discordActivity: 'Changing skins...',
-        },
-    },
-    {
         path: '/screenshots',
         name: 'Screenshots',
         component: () => import('@/pages/Screenshots.vue'),

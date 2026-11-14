@@ -11,11 +11,9 @@ import {
     HomeNavIcon,
     LabNavIcon,
     LibraryNavIcon,
-    MultiplayerNavIcon,
     NAV_ICON_ANIMATION_PREFIX,
     ScreenshotsNavIcon,
     SettingsNavIcon,
-    SkinsNavIcon,
     WorldsNavIcon,
 } from '.'
 
@@ -27,8 +25,6 @@ const ICONS: [string, Component][] = [
     ['screenshots', ScreenshotsNavIcon],
     ['worlds', WorldsNavIcon],
     ['discover', DiscoverNavIcon],
-    ['skins', SkinsNavIcon],
-    ['multiplayer', MultiplayerNavIcon],
     ['library', LibraryNavIcon],
     ['lab', LabNavIcon],
     ['create', CreateNavIcon],

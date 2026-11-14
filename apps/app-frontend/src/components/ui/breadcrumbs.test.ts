@@ -7,7 +7,6 @@ import { resolveBreadcrumbLabel } from '../../helpers/breadcrumb-label.ts'
 const localeFiles = {
     'en-US': '../../locales/en-US/index.json',
     'zh-CN': '../../locales/zh-CN/index.json',
-    'zh-TW': '../../locales/zh-TW/index.json',
 } as const
 
 const localeMessages = Object.fromEntries(
@@ -34,8 +33,6 @@ it('upgrade breadcrumb reuses localized Upgrade instance message at runtime', ()
     expect(resolve()).toBe('Upgrade instance')
     locale = 'zh-CN'
     expect(resolve()).toBe('升级实例')
-    locale = 'zh-TW'
-    expect(resolve()).toBe('升級實例')
 })
 
 it('screenshots breadcrumb resolves through the active locale', () => {

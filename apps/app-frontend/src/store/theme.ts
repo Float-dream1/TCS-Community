@@ -262,8 +262,6 @@ export type ThemeStore = {
     shortcutNavHome: boolean
     shortcutNavWorlds: boolean
     shortcutNavDiscover: boolean
-    shortcutNavSkins: boolean
-    shortcutNavMultiplayer: boolean
     shortcutNavLibrary: boolean
     shortcutNavLab: boolean
     shortcutNavDownloads: boolean
@@ -313,8 +311,6 @@ export const DEFAULT_THEME_STORE: ThemeStore = {
     shortcutNavHome: false,
     shortcutNavWorlds: false,
     shortcutNavDiscover: false,
-    shortcutNavSkins: false,
-    shortcutNavMultiplayer: false,
     shortcutNavLibrary: false,
     shortcutNavLab: false,
     shortcutNavDownloads: false,
