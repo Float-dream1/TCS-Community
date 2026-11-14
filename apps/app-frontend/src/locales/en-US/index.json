@@ -15143,6 +15143,12 @@
   "app.settings.about.development-team": {
     "message": "Development team"
   },
+  "app.settings.about.easter-egg": {
+    "message": "Easter egg"
+  },
+  "app.settings.about.easter-egg-close": {
+    "message": "Close"
+  },
   "app.settings.about.easteregg.click-hint": {
     "message": "Click to open a hidden Mini Game"
   },

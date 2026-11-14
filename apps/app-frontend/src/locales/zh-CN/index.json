@@ -15143,6 +15143,12 @@
   "app.settings.about.development-team": {
     "message": "开发组"
   },
+  "app.settings.about.easter-egg": {
+    "message": "彩蛋"
+  },
+  "app.settings.about.easter-egg-close": {
+    "message": "关闭"
+  },
   "app.settings.about.easteregg.click-hint": {
     "message": "点击以打开彩蛋小游戏"
   },

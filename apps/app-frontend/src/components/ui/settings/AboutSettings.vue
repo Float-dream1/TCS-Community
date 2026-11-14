@@ -1,16 +1,29 @@
 <script setup lang="ts">
-import { ExternalIcon, ScaleIcon } from '@modrinth/assets'
+import { ExternalIcon, ScaleIcon, XIcon } from '@modrinth/assets'
 import { Button, defineMessages, useVIntl } from '@modrinth/ui'
 import { getVersion } from '@tauri-apps/api/app'
 import { inject, onMounted, ref } from 'vue'
 
 import { AxolotlBrandConfig } from '@/config'
+import { EASTER_EGG_LINES } from '@/data/easter-egg-lines'
 
 import SettingsSection from './SettingsSection.vue'
 
 const { formatMessage } = useVIntl()
 const version = ref('')
 const replayOobe = inject<() => void>('replayOobe')
+
+const eggLine = ref<string | null>(null)
+
+function rollEasterEgg() {
+    // Math.random is fine here: the pick is cosmetic and never needs to be
+    // reproducible across launches.
+    eggLine.value = EASTER_EGG_LINES[Math.floor(Math.random() * EASTER_EGG_LINES.length)]
+}
+
+function closeEasterEgg() {
+    eggLine.value = null
+}
 
 const repositoryUrl = AxolotlBrandConfig.repositoryUrl
 // The repository has no standalone LICENSE file; the GPL-3.0 text lives upstream.
@@ -78,6 +91,14 @@ const messages = defineMessages({
     thirdPartyLicenses: {
         id: 'app.settings.about.third-party-licenses',
         defaultMessage: 'Third-party licenses',
+    },
+    easterEgg: {
+        id: 'app.settings.about.easter-egg',
+        defaultMessage: 'Easter egg',
+    },
+    closeEasterEgg: {
+        id: 'app.settings.about.easter-egg-close',
+        defaultMessage: 'Close',
     },
 })
 </script>
@@ -172,11 +193,82 @@ const messages = defineMessages({
             <Button type="base" @click="replayOobe?.()">
                 {{ formatMessage(messages.replayOobe) }}
             </Button>
+            <Button type="base" @click="rollEasterEgg">
+                {{ formatMessage(messages.easterEgg) }}
+            </Button>
         </div>
+
+        <Teleport to="body">
+            <div v-if="eggLine !== null" class="egg-backdrop" @click.self="closeEasterEgg">
+                <div class="egg-card" role="dialog" aria-modal="true">
+                    <button
+                        type="button"
+                        class="egg-close"
+                        :aria-label="formatMessage(messages.closeEasterEgg)"
+                        @click="closeEasterEgg"
+                    >
+                        <XIcon class="size-4" />
+                    </button>
+                    <p class="egg-text">{{ eggLine }}</p>
+                </div>
+            </div>
+        </Teleport>
     </div>
 </template>
 
 <style scoped>
+.egg-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    background: color-mix(in srgb, var(--color-bg) 70%, transparent);
+    backdrop-filter: blur(2px);
+}
+
+.egg-card {
+    position: relative;
+    width: min(24rem, 100%);
+    padding: 2.5rem 1.5rem 1.75rem;
+    border: 1px solid var(--surface-4);
+    border-radius: var(--radius-md);
+    background: var(--surface-3);
+    box-shadow: var(--shadow-floating, 0 12px 32px rgb(0 0 0 / 25%));
+}
+
+.egg-close {
+    position: absolute;
+    top: 0.5rem;
+    left: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    color: var(--color-text-tertiary);
+    border-radius: var(--radius-sm);
+    transition:
+        background-color 0.15s ease,
+        color 0.15s ease;
+}
+
+.egg-close:hover {
+    color: var(--color-text-primary);
+    background: var(--surface-4);
+}
+
+.egg-text {
+    margin: 0;
+    color: var(--color-text-primary);
+    font-size: 1rem;
+    line-height: 1.6;
+    text-align: center;
+    word-break: break-word;
+}
+
 .about-panel {
     padding: 1.25rem;
     border: 1px solid var(--surface-4);
