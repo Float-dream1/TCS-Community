@@ -64,154 +64,6 @@ fn build_blockbench_skin_editor() {
     );
 }
 
-fn collect_engine_sources(
-    path: &std::path::Path,
-    sources: &mut Vec<std::path::PathBuf>,
-) {
-    for entry in std::fs::read_dir(path).expect("Read cubiomes sources") {
-        let entry = entry.expect("Read cubiomes entry");
-        let path = entry.path();
-        if path.is_dir() {
-            if matches!(
-                entry.file_name().to_str(),
-                Some(
-                    "features"
-                        | "loot"
-                        | "loot_tables"
-                        | "barrels"
-                        | "chests"
-                        | "trial_chambers"
-                        | "cjson"
-                )
-            ) {
-                collect_engine_sources(&path, sources);
-            }
-        } else if path.extension().is_some_and(|extension| extension == "c")
-            && path.file_name().is_some_and(|name| name != "tests.c")
-        {
-            sources.push(path);
-        }
-    }
-}
-
-fn build_seed_map_engine() {
-    let source = std::path::Path::new("vendor/cubiomes");
-    let out = std::path::PathBuf::from(std::env::var_os("OUT_DIR").unwrap());
-    let compatibility_header = out.join("cubiomes-loot-functions.h");
-    let header = std::fs::read_to_string(source.join("loot/loot_functions.h"))
-        .expect("Read loot header");
-    let rng =
-        std::fs::canonicalize(source.join("rng.h")).expect("Locate RNG header");
-    let header = header
-        .replace(
-            "RandomSource*, const int min",
-            "RandomSource *unused_rnd, const int min",
-        )
-        .replace(
-            "\"../rng.h\"",
-            &format!("\"{}\"", rng.display().to_string().replace('\\', "/")),
-        );
-    std::fs::write(&compatibility_header, header)
-        .expect("Write pre-C23 compatibility header");
-    let mut sources = vec![
-        std::path::PathBuf::from("src/seed_map/cubiomes_bridge.c"),
-        std::path::PathBuf::from("src/seed_map/cubiomes_details.c"),
-        std::path::PathBuf::from("src/seed_map/underground_volume.c"),
-        std::path::PathBuf::from("src/seed_map/ancient_city_layout.c"),
-    ];
-    collect_engine_sources(source, &mut sources);
-    sources.sort();
-    println!("cargo:rerun-if-changed=src/seed_map/cubiomes_bridge.c");
-    println!("cargo:rerun-if-changed=src/seed_map/cubiomes_details.c");
-    println!("cargo:rerun-if-changed=src/seed_map/underground_volume.c");
-    println!("cargo:rerun-if-changed=src/seed_map/ancient_city_layout.c");
-    println!("cargo:rerun-if-changed=src/seed_map/ancient_city_layout.h");
-    println!("cargo:rerun-if-changed=src/seed_map/cubiomes_bridge.h");
-    println!("cargo:rerun-if-changed=vendor/cubiomes");
-    if std::env::var("CARGO_CFG_TARGET_OS").as_deref() == Ok("windows") {
-        println!("cargo:rerun-if-env-changed=AXOLOTL_CUBIOMES_CC");
-        let compiler = std::env::var_os("AXOLOTL_CUBIOMES_CC")
-            .unwrap_or_else(|| "gcc".into());
-        let out =
-            std::path::PathBuf::from(std::env::var_os("OUT_DIR").unwrap());
-        let dll = out.join("axolotl-cubiomes.dll");
-        let architecture = std::env::var("CARGO_CFG_TARGET_ARCH").unwrap();
-        let target = Command::new(&compiler)
-            .arg("-dumpmachine")
-            .output()
-            .expect("Inspect MinGW target");
-        let machine = String::from_utf8_lossy(&target.stdout);
-        let prefix = if architecture == "x86_64" {
-            "x86_64"
-        } else if architecture == "aarch64" {
-            "aarch64"
-        } else {
-            panic!("Unsupported Windows seed map architecture: {architecture}")
-        };
-        assert!(
-            target.status.success() && machine.starts_with(prefix),
-            "Seed map compiler architecture does not match Rust target: {machine}"
-        );
-        run_command(
-            Command::new(compiler)
-                .args([
-                    "-shared",
-                    "-O3",
-                    "-std=gnu11",
-                    "-fwrapv",
-                    if architecture == "aarch64" {
-                        "--rtlib=compiler-rt"
-                    } else {
-                        "-static-libgcc"
-                    },
-                    "-Wl,--export-all-symbols",
-                    // Tauri watches the bundled DLL. Keep identical builds
-                    // byte-for-byte stable so syncing it preserves its mtime.
-                    "-Wl,--no-insert-timestamp",
-                    // MinGW's automatic base depends on the output path, which
-                    // differs between Cargo configurations. ASLR stays enabled.
-                    "-Wl,--image-base,0x180000000",
-                    "-Ivendor/cubiomes",
-                ])
-                .arg("-include")
-                .arg(&compatibility_header)
-                .args(&sources)
-                .arg("-o")
-                .arg(&dll),
-            "MinGW cubiomes engine build",
-        );
-        let resources = std::path::Path::new("resources/seed-map");
-        std::fs::create_dir_all(resources).expect("Create seed map resources");
-        copy_if_changed(&dll, &resources.join("axolotl-cubiomes.dll"));
-        copy_if_changed(
-            &source.join("LICENSE"),
-            &resources.join("LICENSE.cubiomes.txt"),
-        );
-        println!(
-            "cargo:rustc-env=AXOLOTL_CUBIOMES_BUILD_DLL={}",
-            dll.display()
-        );
-    } else {
-        cc::Build::new()
-            .flag("-include")
-            .flag(compatibility_header.to_str().unwrap())
-            .include(source)
-            .files(&sources)
-            .opt_level(3)
-            .flag_if_supported("-fwrapv")
-            .flag_if_supported("-std=gnu11")
-            .warnings(false)
-            .compile("axolotl-cubiomes");
-        println!("cargo:rustc-link-lib=m");
-    }
-}
-
-/// Commands registered by `tauri::generate_handler!` in `src/main.rs`.
-///
-/// Tauri only enforces the ACL for application commands when an application
-/// manifest is present. Keeping the list in sync with the handler keeps the
-/// main webview privileged while child webviews, such as theme pack pages,
-/// get no application commands at all.
 fn application_commands() -> &'static [&'static str] {
     println!("cargo:rerun-if-changed=src/main.rs");
     println!("cargo:rerun-if-changed=permissions/default.toml");
@@ -345,8 +197,6 @@ fn main() {
             .codegen(tauri_build::CodegenContext::new())
     };
     build_blockbench_skin_editor();
-
-    build_seed_map_engine();
 
     // The application manifest makes Tauri enforce the ACL for app commands.
     // Without it, any local webview (including theme pack pages) could call
@@ -882,49 +732,6 @@ fn main() {
                     ),
             )
             .plugin(
-                "seed-map",
-                InlinedPlugin::new()
-                    .commands(&[
-                        "seed_map_profiles",
-                        "seed_map_render_tile",
-                        "seed_map_find_features",
-                        "seed_map_spawn",
-                        "seed_map_biome_at",
-                        "seed_map_scan_ores",
-                        "seed_map_cancel_ore_scan",
-                        "seed_map_read_level_dat",
-                        "seed_map_structure_details",
-                        "seed_map_container_loot",
-                        "seed_map_underground_tile",
-                        "seed_map_underground_volume",
-                        "seed_map_cancel_underground",
-                    ])
-                    .default_permission(
-                        DefaultPermissionRule::AllowAllCommands,
-                    ),
-            )
-            .plugin(
-                "schematic-preview",
-                InlinedPlugin::new()
-                    .commands(&[
-                        "schematic_preview_open",
-                        "schematic_preview_list_instance_files",
-                        "schematic_preview_list_instance_resource_packs",
-                        "schematic_preview_read_chunk",
-                        "schematic_preview_prepare_resources",
-                        "schematic_preview_block_info",
-                        "schematic_preview_apply_edits",
-                        "schematic_preview_transform",
-                        "schematic_preview_export_sponge",
-                        "schematic_preview_export_litematic",
-                        "schematic_preview_cancel",
-                        "schematic_preview_close",
-                    ])
-                    .default_permission(
-                        DefaultPermissionRule::AllowAllCommands,
-                    ),
-            )
-            .plugin(
                 "tags",
                 InlinedPlugin::new()
                     .commands(&[
@@ -933,21 +740,6 @@ fn main() {
                         "tags_get_loaders",
                         "tags_get_game_versions",
                         "tags_get_donation_platforms",
-                    ])
-                    .default_permission(
-                        DefaultPermissionRule::AllowAllCommands,
-                    ),
-            )
-            .plugin(
-                "mcp",
-                InlinedPlugin::new()
-                    .commands(&[
-                        "mcp_get_state",
-                        "mcp_configure",
-                        "mcp_respond",
-                        "mcp_disconnect",
-                        "mcp_ui_claim",
-                        "mcp_ui_respond",
                     ])
                     .default_permission(
                         DefaultPermissionRule::AllowAllCommands,
@@ -1251,22 +1043,6 @@ fn main() {
                 "telemetry",
                 InlinedPlugin::new()
                     .commands(&["notify_online"])
-                    .default_permission(
-                        DefaultPermissionRule::AllowAllCommands,
-                    ),
-            )
-            .plugin(
-                "mod-translation",
-                InlinedPlugin::new()
-                    .commands(&[
-                        "mod_translation_analyze",
-                        "mod_translation_translate",
-                        "mod_translation_cancel",
-                        "mod_translation_cancel_analysis",
-                        "mod_translation_list_tasks",
-                        "mod_translation_get_task",
-                        "mod_translation_dismiss_task",
-                    ])
                     .default_permission(
                         DefaultPermissionRule::AllowAllCommands,
                     ),

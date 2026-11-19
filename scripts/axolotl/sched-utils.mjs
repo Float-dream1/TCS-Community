@@ -12,14 +12,25 @@ export const repoRoot = path.resolve(import.meta.dirname, '..', '..')
 export const policyPath = 'scripts/axolotl/sched-policy.json'
 
 /** Synchronization primitives that make a declaration a managed resource. */
-export const PRIMITIVES = ['Semaphore', 'Mutex', 'RwLock', 'AsyncMutex', 'AsyncRwLock', 'DashMap', 'DashSet']
+export const PRIMITIVES = [
+    'Semaphore',
+    'Mutex',
+    'RwLock',
+    'AsyncMutex',
+    'AsyncRwLock',
+    'DashMap',
+    'DashSet',
+]
 /** Types that are not acquire-hold-release resources (exclusion rule D3). */
 export const NON_HOLDING = ['Notify', 'CancellationToken', 'watch::Sender', 'watch::Receiver']
 export const EXCLUSION_RULES = ['D1', 'D2', 'D3', 'D4']
 export const SCOPE_CLASSES = ['S1', 'S2', 'S3', 'S4', 'S5', 'S6', 'S7', 'S8', 'S9', 'S10']
 
 export function isMain(moduleUrl) {
-    return Boolean(process.argv[1]) && realpathSync(fileURLToPath(moduleUrl)) === realpathSync(process.argv[1])
+    return (
+        Boolean(process.argv[1]) &&
+        realpathSync(fileURLToPath(moduleUrl)) === realpathSync(process.argv[1])
+    )
 }
 
 export function readJson(file) {
@@ -53,7 +64,9 @@ export function workspaceCrates() {
         .filter((pkg) => members.has(pkg.id))
         .map((pkg) => {
             const dir = toRepoPath(path.dirname(pkg.manifest_path))
-            const root = pkg.targets.find((target) => target.kind.includes('lib')) ?? pkg.targets.find((target) => target.kind.includes('bin'))
+            const root =
+                pkg.targets.find((target) => target.kind.includes('lib')) ??
+                pkg.targets.find((target) => target.kind.includes('bin'))
             return { name: pkg.name, dir, ident: (root?.name ?? pkg.name).replaceAll('-', '_') }
         })
         .sort((a, b) => a.dir.localeCompare(b.dir))
@@ -69,7 +82,9 @@ export function toRepoPath(file) {
  * `#[cfg(test)]` are blanked before the walk, so test-only files never appear.
  */
 export function crateModules(crate) {
-    const rootFile = ['lib.rs', 'main.rs'].map((name) => `${crate.dir}/src/${name}`).find((rel) => existsSync(path.resolve(repoRoot, rel)))
+    const rootFile = ['lib.rs', 'main.rs']
+        .map((name) => `${crate.dir}/src/${name}`)
+        .find((rel) => existsSync(path.resolve(repoRoot, rel)))
     const modules = []
     const seen = new Set()
     const visit = (rel, module, ownsDir) => {
@@ -81,11 +96,15 @@ export function crateModules(crate) {
         const childDir = ownsDir ? dir : `${dir}/${path.posix.basename(rel, '.rs')}`
         for (const match of source.code.matchAll(/\bmod\s+([a-z_]\w*)\s*;/g)) {
             const attributes = source.raw.slice(Math.max(0, match.index - 200), match.index)
-            const custom = attributes.match(/#\[path\s*=\s*"([^"]+)"\]\s*(?:#\[[^\]]*\]\s*)*(?:pub(?:\([^)]*\))?\s+)?$/)
+            const custom = attributes.match(
+                /#\[path\s*=\s*"([^"]+)"\]\s*(?:#\[[^\]]*\]\s*)*(?:pub(?:\([^)]*\))?\s+)?$/,
+            )
             const name = match[1]
             const child = custom
                 ? path.posix.normalize(`${dir}/${custom[1]}`)
-                : [`${childDir}/${name}.rs`, `${childDir}/${name}/mod.rs`].find((candidate) => existsSync(path.resolve(repoRoot, candidate)))
+                : [`${childDir}/${name}.rs`, `${childDir}/${name}/mod.rs`].find((candidate) =>
+                      existsSync(path.resolve(repoRoot, candidate)),
+                  )
             if (child) visit(child, `${module}::${name}`, child.endsWith('/mod.rs'))
         }
     }
@@ -125,7 +144,11 @@ export function maskRust(text) {
             }
             blank(i, j)
             i = j
-        } else if ((c === 'r' || (c === 'b' && next === 'r')) && /^b?r#*"/.test(text.slice(i, i + 12)) && !/\w/.test(text[i - 1] ?? '')) {
+        } else if (
+            (c === 'r' || (c === 'b' && next === 'r')) &&
+            /^b?r#*"/.test(text.slice(i, i + 12)) &&
+            !/\w/.test(text[i - 1] ?? '')
+        ) {
             const head = text.slice(i).match(/^b?r(#*)"/)
             const close = `"${head[1]}`
             const end = text.indexOf(close, i + head[0].length)
@@ -138,7 +161,9 @@ export function maskRust(text) {
             blank(i, j + 1)
             i = j + 1
         } else if (c === "'") {
-            const literal = text.slice(i).match(/^'(\\(x[0-9a-fA-F]{2}|u\{[0-9a-fA-F]+\}|.)|[^\\'])'/)
+            const literal = text
+                .slice(i)
+                .match(/^'(\\(x[0-9a-fA-F]{2}|u\{[0-9a-fA-F]+\}|.)|[^\\'])'/)
             if (literal) {
                 blank(i, i + literal[0].length)
                 i += literal[0].length
@@ -217,13 +242,21 @@ export function lineOf(starts, offset) {
 export function loadSource(rel) {
     const raw = readFileSync(path.resolve(repoRoot, rel), 'utf8').replaceAll('\r\n', '\n')
     const code = stripTestItems(maskRust(raw))
-    return { rel, raw, code, starts: lineStarts(code), lines: code.split('\n'), rawLines: raw.split('\n') }
+    return {
+        rel,
+        raw,
+        code,
+        starts: lineStarts(code),
+        lines: code.split('\n'),
+        rawLines: raw.split('\n'),
+    }
 }
 
 /** Production sources of every crate, each tagged with its crate and module path. */
 export function sourcesOf(crates) {
     const sources = []
-    for (const crate of crates) for (const source of crateModules(crate)) sources.push({ crate, ...source })
+    for (const crate of crates)
+        for (const source of crateModules(crate)) sources.push({ crate, ...source })
     return sources
 }
 
@@ -236,7 +269,9 @@ function typeText(lines, line, column, stop) {
 }
 
 function wordPattern(names) {
-    return new RegExp(`(^|[^\\w])(${names.map((name) => name.replaceAll(':', '\\:')).join('|')})(?![\\w])`)
+    return new RegExp(
+        `(^|[^\\w])(${names.map((name) => name.replaceAll(':', '\\:')).join('|')})(?![\\w])`,
+    )
 }
 
 /**
@@ -250,7 +285,9 @@ export function primitiveNames(sources) {
         grew = false
         const pattern = wordPattern([...names])
         for (const source of sources) {
-            for (const match of source.code.matchAll(/\b(?:struct\s+([A-Z]\w*)\s*(?:<[^>{;]*>)?\s*\(([^;{]*)\)\s*;|type\s+([A-Z]\w*)\s*(?:<[^>=]*>)?\s*=([^;]*);)/g)) {
+            for (const match of source.code.matchAll(
+                /\b(?:struct\s+([A-Z]\w*)\s*(?:<[^>{;]*>)?\s*\(([^;{]*)\)\s*;|type\s+([A-Z]\w*)\s*(?:<[^>=]*>)?\s*=([^;]*);)/g,
+            )) {
                 const name = match[1] ?? match[3]
                 if (!names.has(name) && pattern.test(match[2] ?? match[4])) {
                     names.add(name)
@@ -289,7 +326,9 @@ export function scanDeclarations(sources, primitives) {
     }
     for (const source of sources) {
         const { code, lines, starts } = source
-        for (const match of code.matchAll(/^[ \t]*(?:pub(?:\([^)]*\))?\s+)?static\s+(?:mut\s+)?([A-Z_][A-Z0-9_]*)\s*:/gm)) {
+        for (const match of code.matchAll(
+            /^[ \t]*(?:pub(?:\([^)]*\))?\s+)?static\s+(?:mut\s+)?([A-Z_][A-Z0-9_]*)\s*:/gm,
+        )) {
             const line = lineOf(starts, match.index)
             const column = match.index + match[0].length - starts[line - 1]
             push(source, match[1], null, line, typeText(lines, line, column, /=|;/))
@@ -303,7 +342,9 @@ export function scanDeclarations(sources, primitives) {
                 if ('{([<'.includes(ch)) depth++
                 else if ('})]>'.includes(ch) && code[i - 1] !== '-') depth--
                 else if (depth === 0 && /[a-z_]/.test(ch) && /[\s,{]/.test(code[i - 1])) {
-                    const field = code.slice(i, close).match(/^(?:pub(?:\([^)]*\))?\s+)?([a-z_][a-z0-9_]*)\s*:(?!:)/)
+                    const field = code
+                        .slice(i, close)
+                        .match(/^(?:pub(?:\([^)]*\))?\s+)?([a-z_][a-z0-9_]*)\s*:(?!:)/)
                     if (!field) continue
                     const start = i + field[0].length
                     let end = start
@@ -313,7 +354,13 @@ export function scanDeclarations(sources, primitives) {
                         else if ('})]>'.includes(code[end]) && code[end - 1] !== '-') inner--
                         else if (code[end] === ',' && inner === 0) break
                     }
-                    push(source, field[1], match[1], lineOf(starts, i), code.slice(start, end).replace(/\s+/g, ' ').trim())
+                    push(
+                        source,
+                        field[1],
+                        match[1],
+                        lineOf(starts, i),
+                        code.slice(start, end).replace(/\s+/g, ' ').trim(),
+                    )
                     i = end
                 }
             }
@@ -342,9 +389,13 @@ export function longLivedTypes(sources, extraRoots = []) {
             const targets = edges.get(match[2]) ?? new Set()
             mention(body, targets)
             edges.set(match[2], targets)
-            if (match[2] === 'State' && source.rel === 'packages/app-lib/src/state/mod.rs') mention(body, roots)
+            if (match[2] === 'State' && source.rel === 'packages/app-lib/src/state/mod.rs')
+                mention(body, roots)
         }
-        for (const match of code.matchAll(/^[ \t]*(?:pub(?:\([^)]*\))?\s+)?static\s+(?:mut\s+)?[A-Z_][A-Z0-9_]*\s*:([^=;]*)/gm)) mention(match[1], roots)
+        for (const match of code.matchAll(
+            /^[ \t]*(?:pub(?:\([^)]*\))?\s+)?static\s+(?:mut\s+)?[A-Z_][A-Z0-9_]*\s*:([^=;]*)/gm,
+        ))
+            mention(match[1], roots)
         for (const match of code.matchAll(/\.manage\(\s*([^;]*?)\)\s*;?/g)) mention(match[1], roots)
     }
     const reachable = new Set()
@@ -370,19 +421,35 @@ export function constructionSites(sources, crateDir, name) {
         const bodies = functionBodies(source)
         const inFunction = (offset) => {
             const line = lineOf(starts, offset)
-            return bodies.some((body) => body.from < line && line <= body.to) || bodies.some((body) => body.from === line && code.lastIndexOf('{', offset - 1) > code.lastIndexOf('fn', offset))
+            return (
+                bodies.some((body) => body.from < line && line <= body.to) ||
+                bodies.some(
+                    (body) =>
+                        body.from === line &&
+                        code.lastIndexOf('{', offset - 1) > code.lastIndexOf('fn', offset),
+                )
+            )
         }
-        const push = (offset) => sites.push({ file: source.rel, line: lineOf(starts, offset), inFunction: inFunction(offset) })
+        const push = (offset) =>
+            sites.push({
+                file: source.rel,
+                line: lineOf(starts, offset),
+                inFunction: inFunction(offset),
+            })
         const literal = new RegExp(`(?<![\\w:])(?:\\w+::)*${name}\\s*\\{`, 'g')
         for (const match of code.matchAll(literal)) {
             const before = code.slice(Math.max(0, match.index - 40), match.index)
-            if (/\b(struct|enum|impl|for|union)\s+$|\bimpl\s*<[^>]*>\s*$|->\s*$/.test(before)) continue
+            if (/\b(struct|enum|impl|for|union)\s+$|\bimpl\s*<[^>]*>\s*$|->\s*$/.test(before))
+                continue
             push(match.index)
         }
-        for (const block of code.matchAll(new RegExp(`\\bimpl\\b[^{;]*?\\b${name}\\b(?:<[^{;]*>)?\\s*(?:where[^{]*)?\\{`, 'g'))) {
+        for (const block of code.matchAll(
+            new RegExp(`\\bimpl\\b[^{;]*?\\b${name}\\b(?:<[^{;]*>)?\\s*(?:where[^{]*)?\\{`, 'g'),
+        )) {
             const open = block.index + block[0].length - 1
             const close = matchingBrace(code, open)
-            for (const match of code.slice(open, close).matchAll(/\bSelf\s*\{/g)) push(open + match.index)
+            for (const match of code.slice(open, close).matchAll(/\bSelf\s*\{/g))
+                push(open + match.index)
         }
     }
     return sites
@@ -410,7 +477,12 @@ function resolveReceiver(before) {
         if (!rest.endsWith('.') || rest.endsWith('..')) break
         rest = rest.slice(0, -1).trimEnd()
     }
-    while (segments.length > 1 && segments.at(-1).call && TRANSPARENT_CALLS.has(segments.at(-1).name)) segments.pop()
+    while (
+        segments.length > 1 &&
+        segments.at(-1).call &&
+        TRANSPARENT_CALLS.has(segments.at(-1).name)
+    )
+        segments.pop()
     const last = segments.at(-1)
     if (!last || last.call) return { receiver: null, via: 'call' }
     if (/^[A-Z][A-Z0-9_]*$/.test(last.name)) return { receiver: last.name, via: 'static' }
@@ -441,10 +513,25 @@ export function scanMethodHits(sources) {
                 const target = before.match(
                     /(?:static\s+([A-Z_][A-Z0-9_]*)\s*:[^;]*|\blet\s+(?:mut\s+)?([a-z_]\w*)\s*(?::[^=;]*)?=|\b([a-z_][a-z0-9_]*)\s*(?<!:):(?!:))\s*(?:Arc::new\(\s*)?(?:[A-Z]\w*\(\s*)?(?:[\w:]+::)?$/,
                 )
-                if (target) [receiver, via] = [target[1] ?? target[2] ?? target[3], target[1] ? 'static' : target[2] ? 'binding' : 'field']
+                if (target)
+                    [receiver, via] = [
+                        target[1] ?? target[2] ?? target[3],
+                        target[1] ? 'static' : target[2] ? 'binding' : 'field',
+                    ]
             }
-            const semaphore = method.startsWith('acquire') || method.startsWith('try_acquire') || /Semaphore\s*::\s*$|Semaphore::new/.test(before + match[0])
-            hits.push({ crate: source.crate.dir, file: source.rel, line, method, receiver, via, semaphore })
+            const semaphore =
+                method.startsWith('acquire') ||
+                method.startsWith('try_acquire') ||
+                /Semaphore\s*::\s*$|Semaphore::new/.test(before + match[0])
+            hits.push({
+                crate: source.crate.dir,
+                file: source.rel,
+                line,
+                method,
+                receiver,
+                via,
+                semaphore,
+            })
         }
     }
     return hits
@@ -456,7 +543,8 @@ export function scanMethodHits(sources) {
  */
 export function scanDeclarationLines(sources) {
     const staticLine = /^\s*(pub(\(crate\))? )?static ([A-Z_]+):/
-    const fieldLine = /^\s*(pub(\(crate\))? )?([a-z_]+): (Arc<)?(tokio::sync::)?(Async)?(Mutex|RwLock|Semaphore|DashMap|DashSet)/
+    const fieldLine =
+        /^\s*(pub(\(crate\))? )?([a-z_]+): (Arc<)?(tokio::sync::)?(Async)?(Mutex|RwLock|Semaphore|DashMap|DashSet)/
     const lockWord = wordPattern(PRIMITIVES)
     const found = []
     for (const source of sources) {
@@ -464,10 +552,24 @@ export function scanDeclarationLines(sources) {
             const stat = text.match(staticLine)
             if (stat) {
                 const joined = source.lines.slice(index, index + 4).join(' ')
-                if (lockWord.test(joined.split('=')[0])) found.push({ crate: source.crate.dir, file: source.rel, line: index + 1, name: stat[3], via: 'static-decl' })
+                if (lockWord.test(joined.split('=')[0]))
+                    found.push({
+                        crate: source.crate.dir,
+                        file: source.rel,
+                        line: index + 1,
+                        name: stat[3],
+                        via: 'static-decl',
+                    })
             }
             const field = text.match(fieldLine)
-            if (field) found.push({ crate: source.crate.dir, file: source.rel, line: index + 1, name: field[3], via: 'field-decl' })
+            if (field)
+                found.push({
+                    crate: source.crate.dir,
+                    file: source.rel,
+                    line: index + 1,
+                    name: field[3],
+                    via: 'field-decl',
+                })
         })
     }
     return found
@@ -483,13 +585,19 @@ export function classify(item, policy) {
     const curated = policy.classes[item.ident]
     if (curated) return { scopeClass: curated, classSource: 'policy' }
     const name = bareName(item).toLowerCase()
-    const semaphore = /semaphore|budget|permit/i.test(item.type) && !/dashmap|hashmap/i.test(item.type)
+    const semaphore =
+        /semaphore|budget|permit/i.test(item.type) && !/dashmap|hashmap/i.test(item.type)
     let scopeClass = 'S8'
     if (semaphore) scopeClass = /db|job|permit|quota/.test(name) ? 'S5' : 'S9'
     else if (/budget/.test(name)) scopeClass = 'S9'
     else if (/cancel|request|task|flight|operation|session|starting/.test(name)) scopeClass = 'S6'
     else if (/event|status|snapshot|state/.test(name)) scopeClass = 'S10'
-    else if (/^(Async)?(Mutex|RwLock)<\s*\(\s*\)\s*>$|<\s*(Async)?Mutex<\s*\(\s*\)\s*>\s*>$/.test(item.type.replace(/\w+::/g, ''))) scopeClass = 'S7'
+    else if (
+        /^(Async)?(Mutex|RwLock)<\s*\(\s*\)\s*>$|<\s*(Async)?Mutex<\s*\(\s*\)\s*>\s*>$/.test(
+            item.type.replace(/\w+::/g, ''),
+        )
+    )
+        scopeClass = 'S7'
     return { scopeClass, classSource: 'lexical' }
 }
 
@@ -519,7 +627,11 @@ export function functionBodies(source) {
     const bodies = []
     for (const match of source.code.matchAll(/\bfn\s+([A-Za-z_]\w*)[^;{]*\{/g)) {
         const open = match.index + match[0].length - 1
-        bodies.push({ name: match[1], from: lineOf(source.starts, open), to: lineOf(source.starts, matchingBrace(source.code, open)) })
+        bodies.push({
+            name: match[1],
+            from: lineOf(source.starts, open),
+            to: lineOf(source.starts, matchingBrace(source.code, open)),
+        })
     }
     return bodies
 }
@@ -541,7 +653,12 @@ function innermostBlockEnd(source, blocks, line) {
     const offset = source.starts[line - 1] + Math.max(0, text.search(/\S/))
     let best = null
     for (const block of blocks) {
-        if (block.open < offset && offset < block.close && (!best || block.close - block.open < best.close - best.open)) best = block
+        if (
+            block.open < offset &&
+            offset < block.close &&
+            (!best || block.close - block.open < best.close - best.open)
+        )
+            best = block
     }
     return best ? lineOf(source.starts, best.close) : source.lines.length
 }
@@ -570,11 +687,19 @@ export function scanOrderAnnotations(sources) {
             if (!match) return
             const line = index + 1
             let statement = line
-            while (statement < source.lines.length && source.lines[statement - 1].trim() === '') statement++
-            const body = bodies.filter((candidate) => candidate.from <= statement && statement <= candidate.to).at(-1)
+            while (statement < source.lines.length && source.lines[statement - 1].trim() === '')
+                statement++
+            const body = bodies
+                .filter((candidate) => candidate.from <= statement && statement <= candidate.to)
+                .at(-1)
             const temporary = Boolean(match[2])
             const blockEnd = innermostBlockEnd(source, blocks, statement)
-            const release = releases.find((candidate) => candidate.ident === match[1] && candidate.line > statement && candidate.line <= blockEnd)
+            const release = releases.find(
+                (candidate) =>
+                    candidate.ident === match[1] &&
+                    candidate.line > statement &&
+                    candidate.line <= blockEnd,
+            )
             annotations.push({
                 file: source.rel,
                 line,
@@ -603,7 +728,8 @@ function findCycles(edges) {
         state.set(node, 'open')
         path.push(node)
         for (const target of next.get(node) ?? []) {
-            if (state.get(target) === 'open') cycles.push([...path.slice(path.indexOf(target)), target])
+            if (state.get(target) === 'open')
+                cycles.push([...path.slice(path.indexOf(target)), target])
             else if (!state.has(target)) visit(target)
         }
         path.pop()
@@ -624,7 +750,9 @@ export function checkAnnotations(annotations, registry, exceptions = []) {
     const items = new Map(registry.items.map((item) => [item.ident, item]))
     const unreachable = annotations.filter((annotation) => !items.has(annotation.ident))
     const byFunction = new Map()
-    for (const annotation of annotations.filter((candidate) => items.has(candidate.ident) && candidate.fn)) {
+    for (const annotation of annotations.filter(
+        (candidate) => items.has(candidate.ident) && candidate.fn,
+    )) {
         const key = `${annotation.file}\0${annotation.fn}`
         if (!byFunction.has(key)) byFunction.set(key, [])
         byFunction.get(key).push(annotation)
@@ -639,13 +767,18 @@ export function checkAnnotations(annotations, registry, exceptions = []) {
             for (const acquired of sequence) {
                 const at = acquired.statement ?? acquired.line
                 if (acquired === held || at <= from || at > until) continue
-                if (items.get(acquired.ident).scopeClass === items.get(held.ident).scopeClass) edges.push({ held, acquired })
+                if (items.get(acquired.ident).scopeClass === items.get(held.ident).scopeClass)
+                    edges.push({ held, acquired })
                 else crossFamily++
             }
         }
     }
     const rank = (annotation) => items.get(annotation.ident).rank
-    const excepted = (edge) => exceptions.some((exception) => exception.held === edge.held.ident && exception.acquired === edge.acquired.ident)
+    const excepted = (edge) =>
+        exceptions.some(
+            (exception) =>
+                exception.held === edge.held.ident && exception.acquired === edge.acquired.ident,
+        )
     const backwards = edges.filter((edge) => rank(edge.acquired) <= rank(edge.held))
     return {
         unreachable,
@@ -671,7 +804,9 @@ export function orderCoverage(getpoints, registry, annotations, sources) {
     const family = new Map(registry.items.map((item) => [item.ident, item.scopeClass]))
     const bodies = new Map(sources.map((source) => [source.rel, functionBodies(source)]))
     const fnOf = (file, line) => {
-        const body = (bodies.get(file) ?? []).filter((candidate) => candidate.from <= line && line <= candidate.to).at(-1)
+        const body = (bodies.get(file) ?? [])
+            .filter((candidate) => candidate.from <= line && line <= candidate.to)
+            .at(-1)
         return body ? `${body.name}@${body.from}` : null
     }
     const exempt = []
@@ -702,7 +837,9 @@ export function orderCoverage(getpoints, registry, annotations, sources) {
         point.idents.includes(annotation.ident) &&
         annotation.statement <= point.line &&
         point.line - annotation.statement <= 10
-    const uncovered = constrained.filter((point) => !annotations.some((annotation) => covers(annotation, point)))
+    const uncovered = constrained.filter(
+        (point) => !annotations.some((annotation) => covers(annotation, point)),
+    )
     return { constrained, uncovered, exempt }
 }
 
@@ -710,7 +847,8 @@ export function parseArgs(argv) {
     const args = {}
     for (let i = 0; i < argv.length; i++) {
         const key = argv[i]
-        if (key.startsWith('--')) args[key.slice(2)] = argv[i + 1] && !argv[i + 1].startsWith('--') ? argv[++i] : true
+        if (key.startsWith('--'))
+            args[key.slice(2)] = argv[i + 1] && !argv[i + 1].startsWith('--') ? argv[++i] : true
     }
     return args
 }
@@ -718,7 +856,9 @@ export function parseArgs(argv) {
 /** Select one explicitly shared directory for this run's generated artifacts. */
 export function resolveOutputDir(directory = process.env.SCHED_ARTIFACT_DIR) {
     if (typeof directory !== 'string' || !directory.trim()) {
-        throw new Error("Set SCHED_ARTIFACT_DIR or pass --out/--dir to select this run's scheduler artifact directory")
+        throw new Error(
+            "Set SCHED_ARTIFACT_DIR or pass --out/--dir to select this run's scheduler artifact directory",
+        )
     }
     return path.resolve(repoRoot, directory)
 }

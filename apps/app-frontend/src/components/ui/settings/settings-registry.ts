@@ -55,7 +55,6 @@ const categoryContent: Record<SettingsCategoryId, Pick<SettingsCategory, 'icon' 
         icon: LanguagesIcon,
         content: defineAsyncComponent(() => import('./LanguageTranslationSettings.vue')),
     },
-    mcp: { icon: PlugIcon, content: defineAsyncComponent(() => import('./McpSettings.vue')) },
     'shortcut-settings': {
         icon: KeyboardIcon,
         content: defineAsyncComponent(() => import('./KeybindSettings.vue')),

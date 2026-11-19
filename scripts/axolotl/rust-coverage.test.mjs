@@ -3,8 +3,7 @@ import test from 'node:test'
 
 import { coveragePasses, formatSummary, summarizeLcov } from './rust-coverage.mjs'
 
-const record = (file, lines, hit) =>
-    `TN:\nSF:${file}\nLF:${lines}\nLH:${hit}\nend_of_record\n`
+const record = (file, lines, hit) => `TN:\nSF:${file}\nLF:${lines}\nLH:${hit}\nend_of_record\n`
 
 test('the shell is measured separately from the crates it feature-unifies', () => {
     const [libraries, shell] = coveragePasses()
@@ -17,8 +16,7 @@ test('the shell is measured separately from the crates it feature-unifies', () =
     assert.ok(libraries.includes('--no-report'))
     assert.deepEqual(shell.slice(0, 2), ['llvm-cov', 'nextest'])
     assert.ok(
-        shell.includes('--package') &&
-            shell[shell.indexOf('--package') + 1] === 'theseus_gui',
+        shell.includes('--package') && shell[shell.indexOf('--package') + 1] === 'theseus_gui',
     )
     assert.ok(!shell.includes('--workspace'))
     assert.ok(shell.includes('--no-report'))

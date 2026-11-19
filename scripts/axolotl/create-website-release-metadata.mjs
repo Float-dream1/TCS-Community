@@ -24,7 +24,9 @@ if (fs.existsSync(outputPath)) {
     const current = JSON.parse(fs.readFileSync(outputPath, 'utf8'))
     const nextParts = releaseVersion(release.tag_name).split('.').map(Number)
     // Excluded test releases are not a baseline for stable downloads.
-    const currentVersion = isExcludedRelease(current.tag_name) ? null : releaseVersion(current.tag_name)
+    const currentVersion = isExcludedRelease(current.tag_name)
+        ? null
+        : releaseVersion(current.tag_name)
     if (currentVersion && !currentVersion.includes('-') && !release.tag_name.includes('-')) {
         const currentParts = currentVersion.split('.').map(Number)
         const difference = nextParts

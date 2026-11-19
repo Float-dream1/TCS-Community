@@ -15,7 +15,6 @@ import {
 import { discoverRoutes } from './discover'
 import { homeRoutes } from './home'
 import { instanceRoutes } from './instance'
-import { labRoutes } from './lab'
 import { libraryRoutes } from './library'
 import { themePackRoutes } from './theme-pack'
 import { utilityRoutes } from './utility'
@@ -30,7 +29,6 @@ const router = createRouter({
         ...homeRoutes,
         ...utilityRoutes,
         ...discoverRoutes,
-        ...labRoutes,
         ...libraryRoutes,
         ...instanceRoutes,
         ...themePackRoutes,

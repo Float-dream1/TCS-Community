@@ -22,7 +22,6 @@ const settingsComponentFiles = {
     interface: ['./AppearanceSettings.vue'],
     'home-navigation': ['./AppearanceSettings.vue'],
     'language-translation': ['./LanguageSettings.vue', './TranslationSettings.vue'],
-    mcp: ['./McpSettings.vue'],
     'shortcut-settings': ['./KeybindSettings.vue'],
     'java-performance': ['./JavaSettings.vue'],
     'launch-defaults': [
@@ -189,7 +188,6 @@ it('settings navigation groups preserve the intended Axolotl information archite
         'home-navigation',
         'shortcut-settings',
         'language-translation',
-        'mcp',
     ])
     expect(categoriesForGroup('game')).toEqual([
         'launch-defaults',

@@ -235,7 +235,9 @@ function* rulesIn(css) {
                     if (!parent) return trimmed
                     // SCSS nesting: a relative selector hangs off the parent, and
                     // `&` is replaced by it.
-                    return trimmed.includes('&') ? trimmed.replace(/&/g, parent) : `${parent} ${trimmed}`
+                    return trimmed.includes('&')
+                        ? trimmed.replace(/&/g, parent)
+                        : `${parent} ${trimmed}`
                 })
                 .join(',')
             stack.push(resolved)

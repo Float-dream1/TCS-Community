@@ -33,16 +33,30 @@ export function evaluateOrder(registry, policy, annotations) {
     const errors = []
     const exceptions = policy.orderExceptions ?? []
     const result = checkAnnotations(annotations, registry, exceptions)
-    for (const annotation of result.unreachable) errors.push(`${annotation.file}:${annotation.line} names unregistered ${annotation.ident}`)
-    for (const cycle of result.cycles) errors.push(`nested acquisitions form a cycle: ${cycle.join(' -> ')}`)
-    if (rankFingerprint(registry.items) !== policy.rankFingerprint) errors.push('rank table differs from the reviewed fingerprint')
+    for (const annotation of result.unreachable)
+        errors.push(`${annotation.file}:${annotation.line} names unregistered ${annotation.ident}`)
+    for (const cycle of result.cycles)
+        errors.push(`nested acquisitions form a cycle: ${cycle.join(' -> ')}`)
+    if (rankFingerprint(registry.items) !== policy.rankFingerprint)
+        errors.push('rank table differs from the reviewed fingerprint')
     const items = new Map(registry.items.map((item) => [item.ident, item]))
-    const sameFamily = (violation) => items.get(violation.acquired)?.scopeClass === items.get(violation.held)?.scopeClass
-    const recorded = policy.orderViolations.filter((violation) => sameFamily(violation) && (items.get(violation.acquired)?.rank ?? 0) <= (items.get(violation.held)?.rank ?? 0))
+    const sameFamily = (violation) =>
+        items.get(violation.acquired)?.scopeClass === items.get(violation.held)?.scopeClass
+    const recorded = policy.orderViolations.filter(
+        (violation) =>
+            sameFamily(violation) &&
+            (items.get(violation.acquired)?.rank ?? 0) <= (items.get(violation.held)?.rank ?? 0),
+    )
     const stale = policy.orderViolations.filter((violation) => !recorded.includes(violation))
     // Exceptions found only by the instrumented run are invisible to this static check.
     const unusedExceptions = exceptions.filter(
-        (exception) => !exception.observedBy && !result.exempted.some((edge) => edge.held.ident === exception.held && edge.acquired.ident === exception.acquired),
+        (exception) =>
+            !exception.observedBy &&
+            !result.exempted.some(
+                (edge) =>
+                    edge.held.ident === exception.held &&
+                    edge.acquired.ident === exception.acquired,
+            ),
     )
     return { ...result, errors, recorded, stale, unusedExceptions }
 }
@@ -69,22 +83,41 @@ if (isMain(import.meta.url)) {
     writeJson(path.join(dir, 'sched-order-coverage.json'), {
         constrained: coverage.constrained.length,
         uncovered: coverage.uncovered,
-        exempt: coverage.exempt.map(({ file, line, method, idents, rule }) => ({ file, line, method, idents, rule })),
+        exempt: coverage.exempt.map(({ file, line, method, idents, rule }) => ({
+            file,
+            line,
+            method,
+            idents,
+            rule,
+        })),
     })
     console.log(
         `annotations: ${annotations.length}; acquisition points needing one: ${coverage.constrained.length} (${coverage.uncovered.length} without); ` +
             `exempt: ${coverage.exempt.filter((point) => point.rule === 'F0').length} F0 constructors, ${coverage.exempt.filter((point) => point.rule === 'F1').length} F1 alone in their family`,
     )
-    console.log(`nested same-family pairs: ${result.edges.length} (${result.exempted.length} listed exceptions); cross-family pairs left unordered (R5): ${result.crossFamily}`)
+    console.log(
+        `nested same-family pairs: ${result.edges.length} (${result.exempted.length} listed exceptions); cross-family pairs left unordered (R5): ${result.crossFamily}`,
+    )
     if (args['require-annotations']) {
-        for (const point of coverage.uncovered) result.errors.push(`${point.file}:${point.line} acquires ${point.idents.join(' | ')} without a sched-order annotation`)
+        for (const point of coverage.uncovered)
+            result.errors.push(
+                `${point.file}:${point.line} acquires ${point.idents.join(' | ')} without a sched-order annotation`,
+            )
     }
     for (const error of result.errors) console.error(error)
     if (result.errors.length > 0) process.exit(2)
-    for (const exception of result.unusedExceptions) console.log(`exception no longer observed: ${exception.held} -> ${exception.acquired}`)
-    for (const violation of result.stale) console.log(`no longer descending within one family: ${violation.site}`)
-    for (const { held, acquired } of result.descending) console.log(`V_struct: ${acquired.file}:${acquired.statement} acquires ${acquired.ident} while holding ${held.ident}`)
-    for (const violation of result.recorded) console.log(`V_struct (coarse screen): ${violation.site} acquires ${violation.acquired} while holding ${violation.held}`)
+    for (const exception of result.unusedExceptions)
+        console.log(`exception no longer observed: ${exception.held} -> ${exception.acquired}`)
+    for (const violation of result.stale)
+        console.log(`no longer descending within one family: ${violation.site}`)
+    for (const { held, acquired } of result.descending)
+        console.log(
+            `V_struct: ${acquired.file}:${acquired.statement} acquires ${acquired.ident} while holding ${held.ident}`,
+        )
+    for (const violation of result.recorded)
+        console.log(
+            `V_struct (coarse screen): ${violation.site} acquires ${violation.acquired} while holding ${violation.held}`,
+        )
     if (result.descending.length + result.recorded.length > 0) process.exit(1)
     console.log('per-family order holds for every annotated and recorded path')
 }

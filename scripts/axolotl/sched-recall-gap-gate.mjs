@@ -14,7 +14,13 @@ export function evaluateGap(inventory, recallGap, ratio = DEFAULT_RATIO) {
     const limit = ratio * inventory.items.length
     const absolute = recallGap.items.filter((gap) => gap.classHint === 'S5/S9')
     const oversized = recallGap.items.length > limit
-    return { size: recallGap.items.length, limit, absolute, fallback: oversized || absolute.length > 0, oversized }
+    return {
+        size: recallGap.items.length,
+        limit,
+        absolute,
+        fallback: oversized || absolute.length > 0,
+        oversized,
+    }
 }
 
 if (isMain(import.meta.url)) {
@@ -22,15 +28,26 @@ if (isMain(import.meta.url)) {
     let result
     try {
         const paths = outputPaths(args.dir)
-        result = evaluateGap(readJson(paths.inventory), readJson(paths.recallGap), args.ratio ? Number(args.ratio) : DEFAULT_RATIO)
+        result = evaluateGap(
+            readJson(paths.inventory),
+            readJson(paths.recallGap),
+            args.ratio ? Number(args.ratio) : DEFAULT_RATIO,
+        )
     } catch (error) {
         console.error(`sched-recall-gap-gate: ${error.message}`)
         process.exit(2)
     }
-    console.log(`|C \\ G| = ${result.size}, N = ${args.ratio ?? DEFAULT_RATIO} x |G| = ${result.limit}`)
-    for (const gap of result.absolute) console.log(`S5/S9 gap item: ${gap.key} (${gap.detail ?? gap.reason}) at ${gap.sites.join(', ')}`)
+    console.log(
+        `|C \\ G| = ${result.size}, N = ${args.ratio ?? DEFAULT_RATIO} x |G| = ${result.limit}`,
+    )
+    for (const gap of result.absolute)
+        console.log(
+            `S5/S9 gap item: ${gap.key} (${gap.detail ?? gap.reason}) at ${gap.sites.join(', ')}`,
+        )
     if (result.fallback) {
-        console.log(`fallback to per-family orders triggered: ${[result.oversized && 'gap exceeds N', result.absolute.length > 0 && 'gap holds S5/S9 items'].filter(Boolean).join('; ')}`)
+        console.log(
+            `fallback to per-family orders triggered: ${[result.oversized && 'gap exceeds N', result.absolute.length > 0 && 'gap holds S5/S9 items'].filter(Boolean).join('; ')}`,
+        )
         process.exit(1)
     }
     console.log('gap within the gate; the single total order stands')

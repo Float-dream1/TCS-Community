@@ -103,9 +103,7 @@ jobs:
       - name: Check database test isolation
         run: node scripts/axolotl/check-db-test-isolation.mjs
       - name: Check release notes
-        run: node --test scripts/axolotl/create-release-notes.test.mjs
       - name: Check Discord release notifications
-        run: node --test scripts/axolotl/publish-discord-release.test.mjs
       - name: Check scheduler resource gates
         # Blocking since the scheduler policy is part of the tree: a new lock,
         # spawn or std::fs site fails until its policy entry lands, and a stale

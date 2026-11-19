@@ -508,11 +508,15 @@ async function pruneReleases(config, allowedTags) {
         try {
             await gitlinkRequest(config, releasePath(config, versionId), { method: 'DELETE' })
         } catch (error) {
-            console.warn(`WARN DELETE release ${tag} (version_id ${versionId}) errored: ${error.message}`)
+            console.warn(
+                `WARN DELETE release ${tag} (version_id ${versionId}) errored: ${error.message}`,
+            )
         }
         const remaining = await loadGitlinkReleases(config)
         if (findReleaseByTag(remaining, tag)) {
-            throw new Error(`GitLink DELETE release ${tag} did not take effect; it is still present`)
+            throw new Error(
+                `GitLink DELETE release ${tag} did not take effect; it is still present`,
+            )
         }
         pruned.push(tag)
         console.log(`Pruned ${tag} (version_id ${versionId})`)

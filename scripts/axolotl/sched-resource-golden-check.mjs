@@ -107,7 +107,9 @@ export const GOLDEN = {
 
 export function missingGolden(inventory) {
     const generated = new Set(inventory.items.map((item) => item.ident))
-    return Object.entries(GOLDEN).flatMap(([set, idents]) => idents.filter((ident) => !generated.has(ident)).map((ident) => ({ set, ident })))
+    return Object.entries(GOLDEN).flatMap(([set, idents]) =>
+        idents.filter((ident) => !generated.has(ident)).map((ident) => ({ set, ident })),
+    )
 }
 
 if (isMain(import.meta.url)) {
@@ -116,21 +118,37 @@ if (isMain(import.meta.url)) {
     // updating both the file and the recorded hash in the same reviewed change.
     const goldenText = readFileSync(path.resolve(repoRoot, GOLDEN_FILE), 'utf8')
     if (goldenText !== `${JSON.stringify(GOLDEN, null, 2)}\n`) {
-        console.error(`the inline golden set and ${GOLDEN_FILE} disagree; edit both in the same reviewed change`)
+        console.error(
+            `the inline golden set and ${GOLDEN_FILE} disagree; edit both in the same reviewed change`,
+        )
         process.exit(1)
     }
     const shaText = readFileSync(path.resolve(repoRoot, GOLDEN_SHA256), 'utf8')
     if (frozenMismatch(goldenText, shaText)) {
-        console.error(`${GOLDEN_FILE} does not match ${GOLDEN_SHA256}; a frozen change needs the hash updated in review`)
+        console.error(
+            `${GOLDEN_FILE} does not match ${GOLDEN_SHA256}; a frozen change needs the hash updated in review`,
+        )
         process.exit(1)
     }
-    const inventory = args.inventory ? readJson(args.inventory) : buildInventory(loadPolicy()).inventory
+    const inventory = args.inventory
+        ? readJson(args.inventory)
+        : buildInventory(loadPolicy()).inventory
     const missing = missingGolden(inventory)
-    const apps = inventory.items.filter((item) => item.crate === 'apps/app' && item.kind === 'static' && item.status === 'registered')
-    for (const [set, idents] of Object.entries(GOLDEN)) console.log(`${set}: ${idents.length - missing.filter((entry) => entry.set === set).length}/${idents.length} present`)
-    console.log(`apps/app/src registered lock statics in G: ${apps.length} (design lower bound >= 15)`)
+    const apps = inventory.items.filter(
+        (item) =>
+            item.crate === 'apps/app' && item.kind === 'static' && item.status === 'registered',
+    )
+    for (const [set, idents] of Object.entries(GOLDEN))
+        console.log(
+            `${set}: ${idents.length - missing.filter((entry) => entry.set === set).length}/${idents.length} present`,
+        )
+    console.log(
+        `apps/app/src registered lock statics in G: ${apps.length} (design lower bound >= 15)`,
+    )
     if (apps.length < 15) {
-        console.error(`apps/app/src registered lock statics fell to ${apps.length}; the design lower bound is 15`)
+        console.error(
+            `apps/app/src registered lock statics fell to ${apps.length}; the design lower bound is 15`,
+        )
         process.exit(1)
     }
     if (missing.length > 0) {

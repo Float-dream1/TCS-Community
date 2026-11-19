@@ -33,10 +33,14 @@ import {
 } from './sched-utils.mjs'
 
 export function buildInventory(policy) {
-    const invalid = policy.exclusions.filter((entry) => !EXCLUSION_RULES.includes(entry.rule) || !entry.reason?.trim())
+    const invalid = policy.exclusions.filter(
+        (entry) => !EXCLUSION_RULES.includes(entry.rule) || !entry.reason?.trim(),
+    )
     if (invalid.length > 0) {
         const names = invalid.map((entry) => entry.ident).join(', ')
-        throw new Error(`exclusions must cite one of ${EXCLUSION_RULES.join('/')} with a reason (spec §6.3.1): ${names}`)
+        throw new Error(
+            `exclusions must cite one of ${EXCLUSION_RULES.join('/')} with a reason (spec §6.3.1): ${names}`,
+        )
     }
 
     const crates = workspaceCrates()
@@ -45,7 +49,8 @@ export function buildInventory(policy) {
     const generated = scanDeclarations(sources, primitives)
     const longLived = longLivedTypes(sources, policy.longLivedRoots)
     const curatedExclusions = new Map(policy.exclusions.map((entry) => [entry.ident, entry]))
-    const hostOf = (item) => (item.kind === 'field' ? `${item.module}::${item.name.split('.')[0]}` : null)
+    const hostOf = (item) =>
+        item.kind === 'field' ? `${item.module}::${item.name.split('.')[0]}` : null
     // Rule D2 needs proof (spec §11.7 J2): at least one construction site and
     // every site inside a function body. Without it the field stays registered.
     const constructionCache = new Map()
@@ -53,7 +58,10 @@ export function buildInventory(policy) {
         const key = `${crate}\0${host}`
         if (!constructionCache.has(key)) {
             const sites = constructionSites(sources, crate, host)
-            constructionCache.set(key, sites.length > 0 && sites.every((site) => site.inFunction) ? sites : null)
+            constructionCache.set(
+                key,
+                sites.length > 0 && sites.every((site) => site.inFunction) ? sites : null,
+            )
         }
         return constructionCache.get(key)
     }
@@ -61,13 +69,23 @@ export function buildInventory(policy) {
     const registered = []
     const excluded = []
     for (const item of generated) {
-        const curated = curatedExclusions.get(item.ident) ?? curatedExclusions.get(`${hostOf(item)}.*`)
+        const curated =
+            curatedExclusions.get(item.ident) ?? curatedExclusions.get(`${hostOf(item)}.*`)
         const host = item.name.split('.')[0]
         if (!item.holding) {
-            excluded.push({ ...item, rule: 'D3', reason: `type holds no acquire-hold-release primitive: ${item.type}` })
+            excluded.push({
+                ...item,
+                rule: 'D3',
+                reason: `type holds no acquire-hold-release primitive: ${item.type}`,
+            })
         } else if (curated) {
             excluded.push({ ...item, rule: curated.rule, reason: curated.reason })
-        } else if (item.kind === 'field' && !longLived.has(host) && !policy.longLivedRoots.includes(host) && perOperation(item.crate, host)) {
+        } else if (
+            item.kind === 'field' &&
+            !longLived.has(host) &&
+            !policy.longLivedRoots.includes(host) &&
+            perOperation(item.crate, host)
+        ) {
             const sites = perOperation(item.crate, host)
             excluded.push({
                 ...item,
@@ -83,7 +101,16 @@ export function buildInventory(policy) {
     // consistency check (E ⊆ G) reports them instead of hiding them here.
     for (const entry of policy.exclusions) {
         const host = entry.ident.endsWith('.*') ? entry.ident.slice(0, -2) : null
-        if (!generated.some((item) => item.ident === entry.ident || (host && hostOf(item) === host))) excluded.push({ ident: entry.ident, rule: entry.rule, reason: entry.reason, file: null, line: null })
+        if (
+            !generated.some((item) => item.ident === entry.ident || (host && hostOf(item) === host))
+        )
+            excluded.push({
+                ident: entry.ident,
+                rule: entry.rule,
+                reason: entry.reason,
+                file: null,
+                line: null,
+            })
     }
 
     const registry = assignRanks(registered, policy)
@@ -102,9 +129,24 @@ export function buildInventory(policy) {
         const sameFile = candidates.filter((item) => item.file === hit.file)
         const owners = sameFile.length > 0 ? sameFile : candidates
         if (owners.length > 0) {
-            getpoints.push({ file: hit.file, line: hit.line, method: hit.method, receiver: hit.receiver, idents: owners.map((item) => item.ident) })
+            getpoints.push({
+                file: hit.file,
+                line: hit.line,
+                method: hit.method,
+                receiver: hit.receiver,
+                idents: owners.map((item) => item.ident),
+            })
         }
-        codeSide.push({ crate: hit.crate, file: hit.file, line: hit.line, name: hit.receiver, via: hit.via, method: hit.method, semaphore: hit.semaphore, matched: owners.length > 0 })
+        codeSide.push({
+            crate: hit.crate,
+            file: hit.file,
+            line: hit.line,
+            name: hit.receiver,
+            via: hit.via,
+            method: hit.method,
+            semaphore: hit.semaphore,
+            matched: owners.length > 0,
+        })
     }
     for (const decl of scanDeclarationLines(sources)) {
         const matched = byCrateName.has(`${decl.crate}\0${decl.name}`)
@@ -120,7 +162,9 @@ export function buildInventory(policy) {
             crate: entry.crate,
             name: entry.name,
             sites: [],
-            reason: curated?.reason ?? (entry.via.endsWith('-decl') ? 'cross-line-declaration' : 'other'),
+            reason:
+                curated?.reason ??
+                (entry.via.endsWith('-decl') ? 'cross-line-declaration' : 'other'),
             detail: curated?.detail ?? null,
             classHint: null,
             unconstrained: true,
@@ -136,16 +180,37 @@ export function buildInventory(policy) {
             primitives: [...primitives].sort(),
             items: generated.map(({ holding, ...item }) => ({
                 ...item,
-                status: registered.some((entry) => entry.ident === item.ident && entry.file === item.file) ? 'registered' : 'excluded',
+                status: registered.some(
+                    (entry) => entry.ident === item.ident && entry.file === item.file,
+                )
+                    ? 'registered'
+                    : 'excluded',
             })),
         },
         registry: {
             classOrder: policy.classOrder,
             fingerprint: rankFingerprint(registry),
-            items: registry.map(({ ident, rank, scopeClass, classSource, file, line, type }) => ({ ident, rank, scopeClass, classSource, file, line, type })),
+            items: registry.map(({ ident, rank, scopeClass, classSource, file, line, type }) => ({
+                ident,
+                rank,
+                scopeClass,
+                classSource,
+                file,
+                line,
+                type,
+            })),
         },
         exclusions: {
-            items: excluded.sort(compareItems).map(({ ident, rule, reason, evidence, file, line }) => ({ ident, rule, reason, ...(evidence ? { evidence } : {}), file, line })),
+            items: excluded
+                .sort(compareItems)
+                .map(({ ident, rule, reason, evidence, file, line }) => ({
+                    ident,
+                    rule,
+                    reason,
+                    ...(evidence ? { evidence } : {}),
+                    file,
+                    line,
+                })),
         },
         getpoints: {
             items: getpoints.sort((a, b) => a.file.localeCompare(b.file) || a.line - b.line),

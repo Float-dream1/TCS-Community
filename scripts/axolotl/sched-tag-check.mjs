@@ -15,17 +15,26 @@ export function tagViolations(sources) {
     const definition = tag.code.match(/((?:#\[[^\]]*\]\s*)*)pub\s+struct\s+Tag\s*\{/)
     if (!definition) return [`${TAG}: struct Tag not found`]
     // Attributes come from the masked code, so doc comments cannot match.
-    if (/\b(Deserialize|Clone|Copy|Default)\b/.test(definition[1])) violations.push(`${TAG}: Tag derives Deserialize, Clone, Copy or Default`)
+    if (/\b(Deserialize|Clone|Copy|Default)\b/.test(definition[1]))
+        violations.push(`${TAG}: Tag derives Deserialize, Clone, Copy or Default`)
     const open = definition.index + definition[0].length - 1
     const body = tag.code.slice(open + 1, matchingBrace(tag.code, open))
     if (/\bpub\b/.test(body)) violations.push(`${TAG}: Tag has a public field`)
     for (const source of sources) {
-        for (const match of source.code.matchAll(/\bimpl\b[^{;]*\b(From|TryFrom|Deserialize|Clone|Default)\b[^{;]*\bfor\s+(?:\w+::)*Tag\b(?!\w)/g)) {
-            violations.push(`${source.rel}:${lineOf(source.starts, match.index)} implements ${match[1]} for Tag`)
+        for (const match of source.code.matchAll(
+            /\bimpl\b[^{;]*\b(From|TryFrom|Deserialize|Clone|Default)\b[^{;]*\bfor\s+(?:\w+::)*Tag\b(?!\w)/g,
+        )) {
+            violations.push(
+                `${source.rel}:${lineOf(source.starts, match.index)} implements ${match[1]} for Tag`,
+            )
         }
         if (source.rel === TAG) continue
-        for (const match of source.code.matchAll(/(?<![\w:])(?:\w+::)*tag::Tag\s*\{|(?<![\w:.])Tag\s*\{\s*(?:id|generation|level|origin)\s*[:,]/g)) {
-            violations.push(`${source.rel}:${lineOf(source.starts, match.index)} builds a Tag outside tag.rs`)
+        for (const match of source.code.matchAll(
+            /(?<![\w:])(?:\w+::)*tag::Tag\s*\{|(?<![\w:.])Tag\s*\{\s*(?:id|generation|level|origin)\s*[:,]/g,
+        )) {
+            violations.push(
+                `${source.rel}:${lineOf(source.starts, match.index)} builds a Tag outside tag.rs`,
+            )
         }
     }
     return violations

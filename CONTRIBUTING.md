@@ -18,7 +18,7 @@
 
 ### 启动开发环境
 
-1. 初始化 Git 子模块（cubiomes 是构建期的编译依赖，缺失会导致 Rust 编译失败），启用 Corepack 并安装依赖：
+1. 初始化 Git 子模块（`third-party/blockbench` 是皮肤编辑器的构建依赖），启用 Corepack 并安装依赖：
    ```powershell
    git submodule update --init --recursive
    corepack enable

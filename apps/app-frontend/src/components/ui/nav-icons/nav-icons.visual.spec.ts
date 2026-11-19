@@ -9,7 +9,6 @@ import {
     CreateNavIcon,
     DiscoverNavIcon,
     HomeNavIcon,
-    LabNavIcon,
     LibraryNavIcon,
     NAV_ICON_ANIMATION_PREFIX,
     SettingsNavIcon,
@@ -24,7 +23,6 @@ const ICONS: [string, Component][] = [
     ['worlds', WorldsNavIcon],
     ['discover', DiscoverNavIcon],
     ['library', LibraryNavIcon],
-    ['lab', LabNavIcon],
     ['create', CreateNavIcon],
     ['settings', SettingsNavIcon],
 ]

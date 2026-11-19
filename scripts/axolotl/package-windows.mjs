@@ -34,11 +34,7 @@ const host = output('rustc', ['-vV']).match(/^host: (.+)$/m)?.[1]
 const architecture = windowsPackageArchitecture(host)
 const initialHash = sha256(binary)
 process.env.AXOLOTL_INSTALLER_UI_PATH = requireFile(path.join(source, 'axolotl-installer-ui.exe'))
-for (const file of [
-    binary,
-    process.env.AXOLOTL_INSTALLER_UI_PATH,
-    requireFile(path.join(app, 'resources/seed-map/axolotl-cubiomes.dll')),
-]) {
+for (const file of [binary, process.env.AXOLOTL_INSTALLER_UI_PATH]) {
     verifyWindowsBinaryArchitecture(fs.readFileSync(file), architecture, file)
 }
 const destination = path.resolve(values.output)
@@ -107,17 +103,6 @@ const portable = path.join(
 fs.mkdirSync(path.join(portable, '.Axolotl'), { recursive: true })
 fs.copyFileSync(binary, path.join(portable, 'Axolotl Launcher.exe'))
 fs.copyFileSync(process.env.AXOLOTL_INSTALLER_UI_PATH, path.join(portable, 'axolotl-updater.exe'))
-requireFile(path.join(app, 'resources/seed-map/axolotl-cubiomes.dll'))
-fs.cpSync(path.join(app, 'resources/seed-map'), path.join(portable, 'resources/seed-map'), {
-    recursive: true,
-})
-fs.cpSync(
-    path.join(app, 'resources/blockbench-skin'),
-    path.join(portable, 'resources/blockbench-skin'),
-    {
-        recursive: true,
-    },
-)
 run(
     'powershell.exe',
     [

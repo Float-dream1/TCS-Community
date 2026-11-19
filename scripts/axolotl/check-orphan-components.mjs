@@ -52,9 +52,7 @@ const orphans = []
  * of the same name, which would let a dead component evade the check.
  */
 function isReferenced(name, text) {
-    const importStatement = new RegExp(
-        `import\\s[^;]*\\b${name}\\b[^;]*from\\s*['"][^'"]+['"]`,
-    )
+    const importStatement = new RegExp(`import\\s[^;]*\\b${name}\\b[^;]*from\\s*['"][^'"]+['"]`)
     const namedImport = new RegExp(`\\b${name}\\b\\s*[,}]`)
     const elementTag = new RegExp(`<${name}[\\s/>]`)
     const dynamicBinding = new RegExp(`\\b(?:is|component)\\s*[:=]\\s*['"]?${name}\\b`)

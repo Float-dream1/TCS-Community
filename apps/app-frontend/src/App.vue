@@ -65,10 +65,8 @@ import {
 } from 'vue'
 import { type RouteLocationNormalizedLoaded, RouterView, useRoute, useRouter } from 'vue-router'
 
-import { getAnnouncementByVersion } from '@/announcements/catalog'
-import InstanceExportModal from '@/components/lab/recipe-generator/InstanceExportModal.vue'
+import InstanceExportModal from '@/components/ui/instance-export/InstanceExportModal.vue'
 import AccountsCard from '@/components/ui/AccountsCard.vue'
-import UpdateAnnouncementModal from '@/components/ui/announcement/UpdateAnnouncementModal.vue'
 import AppActionBar from '@/components/ui/AppActionBar.vue'
 import AppTitlebar from '@/components/ui/AppTitlebar.vue'
 import ContentInstallPreviewModal from '@/components/ui/ContentInstallPreviewModal.vue'
@@ -88,7 +86,6 @@ import {
     DiscoverNavIcon,
     ForumNavIcon,
     HomeNavIcon,
-    LabNavIcon,
     LibraryNavIcon,
     SettingsNavIcon,
     SkinStationNavIcon,
@@ -113,9 +110,6 @@ import { minecraftLaunchErrorKey } from '@/composables/useMinecraftLaunchError'
 import { setupMojangAuthMonitor, useMojangAuthStatus } from '@/composables/useMojangAuth'
 import { useNetworkStatus } from '@/composables/useNetworkStatus'
 import { AxolotlBrandConfig, config } from '@/config'
-import { startMcpUiBridge } from '@/features/mcp/interface'
-import McpConnectionOverlay from '@/features/mcp/McpConnectionOverlay.vue'
-import { startMcpStateSync } from '@/features/mcp/runtime'
 import { trackEvent } from '@/helpers/analytics'
 import { openManualAppUpdate } from '@/helpers/app-update-download'
 import { createUpdateFailureConsumer } from '@/helpers/app-update-failure'
@@ -234,7 +228,6 @@ const themeStore = useTheming()
 const { hasModal } = useModalStack()
 const router = useRouter()
 const route = useRoute()
-const onSchematicWorkshopPage = computed(() => route.path === '/lab/schematic-preview')
 const onSettingsPage = computed(() => route.path.startsWith('/settings'))
 const isSchematicFile = (path: string) => /\.(litematic|schematic|schem)$/i.test(path)
 const APP_LEFT_NAV_WIDTH = '4rem'
@@ -485,7 +478,6 @@ watch(
 const pendingUpdateFailure = ref<PendingUpdateFailure | null>(null)
 const consumeUpdateFailure = createUpdateFailureConsumer()
 const stateInitialized = ref(false)
-let stopMcpStateSync: (() => void) | undefined
 const privacyConsentModal = ref<InstanceType<typeof PrivacyConsentModal>>()
 const privacyConsentPending = ref(false)
 const titlebar = ref<InstanceType<typeof AppTitlebar>>()
@@ -558,7 +550,6 @@ watch([() => os.value, titlebarAnchor], ([platform, anchorElement]) => {
     window.visualViewport?.addEventListener('scroll', scheduleNativeTrafficLightAnchorUpdate)
     scheduleNativeTrafficLightAnchorUpdate()
 })
-const updateAnnouncementModal = ref()
 const closeChoiceModal = ref<InstanceType<typeof NewModal>>()
 const backupExitModal = ref<InstanceType<typeof NewModal>>()
 const activeBackupOperations = ref<BackupOperation[]>([])
@@ -574,8 +565,6 @@ let unlistenWindowResize: (() => void) | undefined
 let stopNativeEditMenu: (() => void) | undefined
 const minecraftCrashModal = ref()
 const missingJavaModal = ref<InstanceType<typeof MissingJavaModal>>()
-const pendingUpdateAnnouncementVersion = ref<string | null>(null)
-const updateAnnouncementShowing = ref(false)
 
 setupMojangAuthMonitor(stateInitialized)
 const mojangAuth = useMojangAuthStatus()
@@ -949,7 +938,6 @@ function startDirectLinkSync() {
 }
 
 onUnmounted(async () => {
-    stopMcpStateSync?.()
     appUnmounted = true
     windowAppearance.dispose()
     stopNativeEditMenu?.()
@@ -1185,10 +1173,6 @@ const messages = defineMessages({
     downloads: {
         id: 'app.navigation.downloads',
         defaultMessage: 'Downloads',
-    },
-    lab: {
-        id: 'app.navigation.lab',
-        defaultMessage: 'Lab',
     },
     forumPage: {
         id: 'app.navigation.forum',
@@ -1617,7 +1601,6 @@ async function setupApp() {
     os.value = await getOS()
     const dev = await isDev()
     isDevEnvironment.value = dev
-    pendingUpdateAnnouncementVersion.value = pending_update_toast_for_version
     pendingUpdateFailure.value = initialSettings.pending_update_failure ?? null
     privacyConsentPending.value = telemetry_consent_version < 1
     const oobePending = oobe.prepare(oobe_completed_steps)
@@ -1687,14 +1670,6 @@ async function setupApp() {
             })
         })
     })
-    const stopMcpSync = await startMcpStateSync()
-    const stopMcpUi = await startMcpUiBridge(router)
-    const stopMcp = () => {
-        stopMcpUi()
-        stopMcpSync()
-    }
-    if (appUnmounted) stopMcp()
-    else stopMcpStateSync = stopMcp
     if (!oobePending && privacyConsentPending.value) {
         await showPrivacyConsent({
             telemetry,
@@ -1806,35 +1781,9 @@ async function finishOobe() {
     await scheduleStartupDialogs()
 }
 
-async function handleUpdateAnnouncementClosed(version: string | null) {
-    if (pendingUpdateAnnouncementVersion.value !== version) return
-
-    const settings = await getSettings()
-    if (settings.pending_update_toast_for_version === version) {
-        settings.pending_update_toast_for_version = null
-        await updateSettings({ pending_update_toast_for_version: null })
-    }
-    pendingUpdateAnnouncementVersion.value = null
-    updateAnnouncementShowing.value = false
-    await new Promise((resolve) => setTimeout(resolve, 350))
-    await scheduleStartupDialogs()
-}
-
 async function scheduleStartupDialogs() {
-    if (
-        !stateInitialized.value ||
-        privacyConsentPending.value ||
-        oobeVisible.value ||
-        updateAnnouncementShowing.value
-    )
-        return
+    if (!stateInitialized.value || privacyConsentPending.value || oobeVisible.value) return
 
-    if (pendingUpdateAnnouncementVersion.value && updateAnnouncementModal.value) {
-        updateAnnouncementShowing.value = true
-        await nextTick()
-        updateAnnouncementModal.value.show(pendingUpdateAnnouncementVersion.value)
-        return
-    }
     try {
         await consumeUpdateFailure(
             pendingUpdateFailure.value,
@@ -1889,10 +1838,6 @@ provide('previewRemoteAnnouncement', (type: 'modal' | 'notification', withAction
     remoteAnnouncementPreview.value?.preview(type, withAction)
 })
 provide('previewPrivacyConsentModal', previewPrivacyConsentModal)
-provide('previewUpdateAnnouncement', (version = null) => {
-    const previewVersion = version ?? pendingUpdateAnnouncementVersion.value
-    if (previewVersion) updateAnnouncementModal.value?.show(previewVersion)
-})
 
 const stateFailed = ref(false)
 stateInitialization
@@ -2328,7 +2273,6 @@ const dropImport = useDropImport({
     installModpackFromPath,
     contentInstall,
     fileDrop,
-    onSchematicWorkshopPage,
     onSettingsPage,
     isSchematicFile,
     trackEvent: trackEvent as (name: string, properties?: Record<string, unknown>) => void,
@@ -2950,12 +2894,8 @@ setAppUpdateActions({
     check: manualUpdateCheck,
     download: downloadAvailableUpdate,
     install: installUpdate,
-    changelog: (version) => {
-        if (version && getAnnouncementByVersion(version)) {
-            updateAnnouncementModal.value?.show(version)
-        } else {
-            openUrl(AxolotlBrandConfig.website)
-        }
+    changelog: () => {
+        openUrl(AxolotlBrandConfig.website)
     },
 })
 
@@ -3077,15 +3017,6 @@ provideAppUpdateDownloadProgress(appUpdateDownload)
             'has-css-window-border': cssWindowBorder,
         }"
     >
-        <McpConnectionOverlay
-            :rounded="
-                !isMaximized &&
-                !!(
-                    (themeStore.customBackgroundPath && !themeStore.transparentBackground) ||
-                    (themeStore.transparentBackground && !nativeDecorations)
-                )
-            "
-        />
         <Transition name="fade">
             <div
                 v-if="restarting"
@@ -3160,14 +3091,6 @@ provideAppUpdateDownloadProgress(appUpdateDownload)
                     "
                 >
                     <LibraryNavIcon />
-                </NavButton>
-                <NavButton
-                    v-if="!themeStore.isNavItemHidden('lab')"
-                    v-tooltip.right="formatMessage(messages.lab)"
-                    to="/lab"
-                    :is-primary="(r) => r.path.startsWith('/lab')"
-                >
-                    <LabNavIcon />
                 </NavButton>
                 <NavButton
                     v-for="page in themePackPages"
@@ -3385,21 +3308,11 @@ provideAppUpdateDownloadProgress(appUpdateDownload)
     <MinecraftCrashModal ref="minecraftCrashModal" />
     <MissingJavaModal ref="missingJavaModal" />
     <PrivacyConsentModal ref="privacyConsentModal" @saved="handlePrivacyConsentSaved" />
-    <RemoteAnnouncements
-        :ready="
-            stateInitialized && !privacyConsentPending && !oobeVisible && !updateAnnouncementShowing
-        "
-    />
+    <RemoteAnnouncements :ready="stateInitialized && !privacyConsentPending && !oobeVisible" />
     <RemoteAnnouncements
         ref="remoteAnnouncementPreview"
         preview-only
-        :ready="
-            stateInitialized && !privacyConsentPending && !oobeVisible && !updateAnnouncementShowing
-        "
-    />
-    <UpdateAnnouncementModal
-        ref="updateAnnouncementModal"
-        @closed="handleUpdateAnnouncementClosed"
+        :ready="stateInitialized && !privacyConsentPending && !oobeVisible"
     />
     <NewModal
         ref="closeChoiceModal"

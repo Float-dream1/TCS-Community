@@ -230,7 +230,8 @@ const isCli = () => {
 if (isCli()) {
     const { violations, unused, missing, unreadable, scanned } = scan()
 
-    for (const root of missing) console.warn(`  note: scanned root is not in this checkout: ${root}`)
+    for (const root of missing)
+        console.warn(`  note: scanned root is not in this checkout: ${root}`)
     for (const directory of unreadable) {
         console.warn(`  note: could not read a scanned path: ${directory}`)
     }
@@ -245,7 +246,9 @@ if (isCli()) {
     }
 
     if (violations.length > 0) {
-        console.error(`Axolotl dead-colour check failed: ${violations.length} class(es) emit no CSS\n`)
+        console.error(
+            `Axolotl dead-colour check failed: ${violations.length} class(es) emit no CSS\n`,
+        )
         for (const violation of violations) {
             console.error(
                 `  ${violation.file}:${violation.line}  ${violation.utility}  — ${violation.reason}`,

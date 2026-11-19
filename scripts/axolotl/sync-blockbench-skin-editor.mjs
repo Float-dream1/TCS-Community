@@ -29,7 +29,10 @@ await Promise.all([
 ])
 
 const bundleContents = await readFile(bundle)
-await writeIfChanged(resolve(destination, 'dist/skin.bundle.js.gz'), gzipSync(bundleContents, { level: 9 }))
+await writeIfChanged(
+    resolve(destination, 'dist/skin.bundle.js.gz'),
+    gzipSync(bundleContents, { level: 9 }),
+)
 expectedFiles.add('dist/skin.bundle.js.gz')
 await removeStaleFiles(destination)
 
@@ -64,7 +67,10 @@ async function removeStaleFiles(directory) {
             if ((await readdir(path)).length === 0) await rm(path, { recursive: true })
             continue
         }
-        if (entry.isFile() && !expectedFiles.has(relative(destination, path).replaceAll('\\', '/'))) {
+        if (
+            entry.isFile() &&
+            !expectedFiles.has(relative(destination, path).replaceAll('\\', '/'))
+        ) {
             await rm(path)
         }
     }

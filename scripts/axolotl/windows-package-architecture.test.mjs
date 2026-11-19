@@ -26,7 +26,7 @@ test('rejects a mismatched application, installer UI or seed map DLL', () => {
     for (const label of [
         'Axolotl Launcher.exe',
         'axolotl-installer-ui.exe',
-        'axolotl-cubiomes.dll',
+        'axolotl-helper.dll',
     ]) {
         for (const [architecture, machine, other] of [
             ['x64', 0x8664, 0xaa64],

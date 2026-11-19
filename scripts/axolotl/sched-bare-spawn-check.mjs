@@ -12,7 +12,18 @@
 
 import { existsSync } from 'node:fs'
 import path from 'node:path'
-import { functionBodies, isMain, lineOf, loadPolicy, parseArgs, readJson, repoRoot, sourcesOf, workspaceCrates, writeJson } from './sched-utils.mjs'
+import {
+    functionBodies,
+    isMain,
+    lineOf,
+    loadPolicy,
+    parseArgs,
+    readJson,
+    repoRoot,
+    sourcesOf,
+    workspaceCrates,
+    writeJson,
+} from './sched-utils.mjs'
 
 export const allowlistPath = 'scripts/axolotl/sched-spawn-allowlist.json'
 export const FORMS = {
@@ -61,12 +72,27 @@ function expandUseTree(text, prefix = []) {
     if (brace === -1) {
         const parsed = text.match(/^([\w:\s]+?)(?:\s+as\s+(\w+))?$/)
         if (!parsed) return []
-        const segments = [...prefix, ...parsed[1].split('::').map((segment) => segment.trim()).filter(Boolean)]
+        const segments = [
+            ...prefix,
+            ...parsed[1]
+                .split('::')
+                .map((segment) => segment.trim())
+                .filter(Boolean),
+        ]
         if (segments.at(-1) === 'self') segments.pop()
         return [{ segments, local: parsed[2] ?? segments.at(-1) }]
     }
-    const base = [...prefix, ...text.slice(0, brace).split('::').map((segment) => segment.trim()).filter(Boolean)]
-    return splitTopLevel(text.slice(brace + 1, text.lastIndexOf('}'))).flatMap((part) => expandUseTree(part, base))
+    const base = [
+        ...prefix,
+        ...text
+            .slice(0, brace)
+            .split('::')
+            .map((segment) => segment.trim())
+            .filter(Boolean),
+    ]
+    return splitTopLevel(text.slice(brace + 1, text.lastIndexOf('}'))).flatMap((part) =>
+        expandUseTree(part, base),
+    )
 }
 
 /**
@@ -77,22 +103,38 @@ function expandUseTree(text, prefix = []) {
  */
 export function fsImportSites(code) {
     const statements = [...code.matchAll(/\buse\s+(?:::)?(std\s*::[^;]*);/g)]
-    const inside = (index) => statements.some((statement) => index >= statement.index && index < statement.index + statement[0].length)
+    const inside = (index) =>
+        statements.some(
+            (statement) =>
+                index >= statement.index && index < statement.index + statement[0].length,
+        )
     const patterns = []
     for (const statement of statements) {
         for (const { segments, local } of expandUseTree(statement[1])) {
-            if (segments[0] !== 'std' || segments[1] !== 'fs' || !local || local === '*' || local === '_') continue
+            if (
+                segments[0] !== 'std' ||
+                segments[1] !== 'fs' ||
+                !local ||
+                local === '*' ||
+                local === '_'
+            )
+                continue
             // The module itself, a type (`File::open`) or a function (`read_to_string(`).
             const use = segments.length === 2 ? '::' : /^[A-Z]/.test(local) ? '\\s*::' : '\\s*\\('
             patterns.push(new RegExp(`(?<![\\w:.])${local}${use}`, 'g'))
         }
     }
-    return patterns.flatMap((pattern) => [...code.matchAll(pattern)].map((match) => match.index)).filter((index) => !inside(index)).sort((a, b) => a - b)
+    return patterns
+        .flatMap((pattern) => [...code.matchAll(pattern)].map((match) => match.index))
+        .filter((index) => !inside(index))
+        .sort((a, b) => a - b)
 }
 
 /** `<innermost fn>: <trimmed source line>`, the identity a site keeps while code around it moves. */
 function siteOf(source, bodies, line) {
-    const owner = bodies.filter((body) => body.from <= line && line <= body.to).reduce((inner, body) => (!inner || body.from >= inner.from ? body : inner), null)
+    const owner = bodies
+        .filter((body) => body.from <= line && line <= body.to)
+        .reduce((inner, body) => (!inner || body.from >= inner.from ? body : inner), null)
     return `${owner?.name ?? '<module>'}: ${(source.rawLines[line - 1] ?? '').trim().replace(/\s+/g, ' ')}`
 }
 
@@ -104,11 +146,20 @@ export function countForms(sources) {
             if (offsets.length === 0) return
             const lines = offsets.map((offset) => lineOf(source.starts, offset))
             const sites = lines.map((line) => siteOf(source, bodies, line)).sort()
-            counts.set(`${source.rel}\0${form}`, { file: source.rel, form, count: lines.length, lines, sites })
+            counts.set(`${source.rel}\0${form}`, {
+                file: source.rel,
+                form,
+                count: lines.length,
+                lines,
+                sites,
+            })
         }
         for (const [form, pattern] of Object.entries(FORMS)) {
             if (GATED[form] && !GATED[form].test(source.code)) continue
-            record(form, [...source.code.matchAll(pattern)].map((match) => match.index))
+            record(
+                form,
+                [...source.code.matchAll(pattern)].map((match) => match.index),
+            )
         }
         record(FS_IMPORT, fsImportSites(source.code))
     }
@@ -118,7 +169,13 @@ export function countForms(sources) {
 export function unboundedInL0(sources, l0Module) {
     return sources
         .filter((source) => source.rel.startsWith(`${l0Module}/`))
-        .flatMap((source) => [...source.code.matchAll(UNBOUNDED)].map((match) => ({ file: source.rel, line: lineOf(source.starts, match.index), form: match[1] })))
+        .flatMap((source) =>
+            [...source.code.matchAll(UNBOUNDED)].map((match) => ({
+                file: source.rel,
+                line: lineOf(source.starts, match.index),
+                form: match[1],
+            })),
+        )
 }
 
 /** Items of `left` not matched one-for-one in `right`. */
@@ -136,25 +193,37 @@ function without(left, right) {
 export function checkSpawns(counts, allowlist) {
     const failures = []
     const stale = []
-    const allowed = new Map(allowlist.entries.map((entry) => [`${entry.file}\0${entry.form}`, entry]))
+    const allowed = new Map(
+        allowlist.entries.map((entry) => [`${entry.file}\0${entry.form}`, entry]),
+    )
     for (const [key, found] of counts) {
         const entry = allowed.get(key)
         if (!entry) {
-            failures.push(`${found.file}: ${found.count} unregistered ${found.form} (lines ${found.lines.join(', ')})`)
+            failures.push(
+                `${found.file}: ${found.count} unregistered ${found.form} (lines ${found.lines.join(', ')})`,
+            )
             continue
         }
         if (!Array.isArray(entry.sites)) {
-            failures.push(`${found.file}: allowlisted ${found.form} records no sites; review them and run --update`)
+            failures.push(
+                `${found.file}: allowlisted ${found.form} records no sites; review them and run --update`,
+            )
             continue
         }
         const added = without(found.sites, entry.sites)
         const gone = without(entry.sites, found.sites)
-        for (const site of added) failures.push(`${found.file}: ${found.form} site not on the allowlist: ${site}`)
-        if (gone.length > 0) stale.push(`${found.file}: ${found.form} lost ${gone.length} allowlisted site(s); lower the allowlist`)
+        for (const site of added)
+            failures.push(`${found.file}: ${found.form} site not on the allowlist: ${site}`)
+        if (gone.length > 0)
+            stale.push(
+                `${found.file}: ${found.form} lost ${gone.length} allowlisted site(s); lower the allowlist`,
+            )
     }
     for (const entry of allowlist.entries) {
-        if (!entry.reason?.trim()) failures.push(`${entry.file}: allowlisted ${entry.form} has no reason`)
-        if (!counts.has(`${entry.file}\0${entry.form}`)) stale.push(`${entry.file}: ${entry.form} no longer occurs; drop it from the allowlist`)
+        if (!entry.reason?.trim())
+            failures.push(`${entry.file}: allowlisted ${entry.form} has no reason`)
+        if (!counts.has(`${entry.file}\0${entry.form}`))
+            stale.push(`${entry.file}: ${entry.form} no longer occurs; drop it from the allowlist`)
     }
     return { failures, stale }
 }
@@ -166,15 +235,32 @@ if (isMain(import.meta.url)) {
     const counts = countForms(sources)
     const file = args.allowlist ?? allowlistPath
     if (args.update) {
-        const previous = new Map((existsSync(path.resolve(repoRoot, file)) ? readJson(file).entries : []).map((entry) => [`${entry.file}\0${entry.form}`, entry]))
-        const entries = [...counts.values()].map(({ file: rel, form, count, sites }) => ({ file: rel, form, count, reason: previous.get(`${rel}\0${form}`)?.reason ?? '', sites }))
-        writeJson(file, { entries: entries.sort((a, b) => a.file.localeCompare(b.file) || a.form.localeCompare(b.form)) })
+        const previous = new Map(
+            (existsSync(path.resolve(repoRoot, file)) ? readJson(file).entries : []).map(
+                (entry) => [`${entry.file}\0${entry.form}`, entry],
+            ),
+        )
+        const entries = [...counts.values()].map(({ file: rel, form, count, sites }) => ({
+            file: rel,
+            form,
+            count,
+            reason: previous.get(`${rel}\0${form}`)?.reason ?? '',
+            sites,
+        }))
+        writeJson(file, {
+            entries: entries.sort(
+                (a, b) => a.file.localeCompare(b.file) || a.form.localeCompare(b.form),
+            ),
+        })
     }
     const { failures, stale } = checkSpawns(counts, readJson(file))
     const unbounded = unboundedInL0(sources, loadPolicy().l0Module)
-    for (const hit of unbounded) failures.push(`${hit.file}:${hit.line} ${hit.form} is banned inside the L0 module`)
+    for (const hit of unbounded)
+        failures.push(`${hit.file}:${hit.line} ${hit.form} is banned inside the L0 module`)
     const total = [...counts.values()].reduce((sum, found) => sum + found.count, 0)
-    console.log(`scope: ${crates.length} crates; ${total} spawn/blocking sites in ${new Set([...counts.values()].map((found) => found.file)).size} files`)
+    console.log(
+        `scope: ${crates.length} crates; ${total} spawn/blocking sites in ${new Set([...counts.values()].map((found) => found.file)).size} files`,
+    )
     for (const note of stale) console.log(`note: ${note}`)
     if (failures.length > 0) {
         for (const failure of failures) console.error(failure)

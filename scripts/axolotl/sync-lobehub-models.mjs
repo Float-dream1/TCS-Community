@@ -261,12 +261,15 @@ function buildCatalog(models, currentProviders, sponsoredModels) {
             throw new Error(`LobeHub ${model.providerId} chat model has no id`)
         }
         if (typeof model.enabled !== 'boolean') {
-            throw new Error(`LobeHub model ${model.providerId}/${model.id} has invalid enabled state`)
+            throw new Error(
+                `LobeHub model ${model.providerId}/${model.id} has invalid enabled state`,
+            )
         }
         if (!Object.hasOwn(providers, model.providerId)) continue
 
         const key = `${model.providerId}\0${model.id}`
-        if (seen.has(key)) throw new Error(`Duplicate LobeHub model: ${model.providerId}/${model.id}`)
+        if (seen.has(key))
+            throw new Error(`Duplicate LobeHub model: ${model.providerId}/${model.id}`)
         seen.add(key)
         const displayName = model.displayName || model.id
         if (typeof displayName !== 'string' || !displayName.trim()) {
@@ -291,9 +294,7 @@ function buildCatalog(models, currentProviders, sponsoredModels) {
         const sponsorModels = currentProviders[providerId]
         if (!sponsorModels?.length) continue
         providers[providerId] = [...sponsorModels]
-        console.log(
-            `Preserved ${sponsorModels.length} sponsored model(s) for ${providerId}`,
-        )
+        console.log(`Preserved ${sponsorModels.length} sponsored model(s) for ${providerId}`)
     }
 
     const previousCount = countModels(currentProviders)

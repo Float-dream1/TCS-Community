@@ -33,7 +33,8 @@ function walk(dir, files = []) {
         const path = join(dir, entry)
         const stat = statSync(path)
         if (stat.isDirectory()) walk(path, files)
-        else if (/\.(vue|ts|js|scss|css)$/.test(entry) && !entry.includes('.test.')) files.push(path)
+        else if (/\.(vue|ts|js|scss|css)$/.test(entry) && !entry.includes('.test.'))
+            files.push(path)
     }
     return files
 }

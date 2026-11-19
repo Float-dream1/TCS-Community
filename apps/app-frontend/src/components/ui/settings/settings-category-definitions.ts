@@ -5,7 +5,6 @@ export type SettingsCategoryId =
     | 'home-navigation'
     | 'language-translation'
     | 'shortcut-settings'
-    | 'mcp'
     | 'launch-defaults'
     | 'instance-sync'
     | 'java-performance'
@@ -65,14 +64,6 @@ export const settingsCategoryDefinitions: SettingsCategoryDefinition[] = [
         name: defineMessage({
             id: 'app.settings.tabs.language-translation',
             defaultMessage: 'Language & translation',
-        }),
-        group: 'launcher',
-    },
-    {
-        id: 'mcp',
-        name: defineMessage({
-            id: 'app.settings.tabs.mcp',
-            defaultMessage: 'MCP',
         }),
         group: 'launcher',
     },

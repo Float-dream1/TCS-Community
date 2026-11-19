@@ -75,16 +75,6 @@ test('website recovery records asset names with SHA-256, preserves newer downloa
         JSON.stringify(release('v1.12.0-beta.1', [asset('v1.12.0-beta.1', 'installer.exe')])),
     )
     assert.notEqual(run('create-website-release-metadata.mjs', [releasePath, outputPath]).status, 0)
-
-    const sourcePath = path.join(directory, 'announcements.ts')
-    const catalogPath = path.join(directory, 'catalog.json')
-    fs.writeFileSync(
-        sourcePath,
-        'export const launcherAnnouncements = [{ id: "fixture", version: "1.11.0" }]',
-    )
-    const catalog = run('create-website-release-catalog.mjs', [catalogPath, sourcePath])
-    assert.equal(catalog.status, 0, catalog.stderr)
-    assert.equal(JSON.parse(fs.readFileSync(catalogPath, 'utf8')).announcements[0].id, 'fixture')
 })
 
 for (const tag of ['v1.9.8', 'v1.10.0']) {

@@ -285,7 +285,6 @@ pub(crate) fn prepare(
         || !files
             .iter()
             .any(|name| name.starts_with("resources/blockbench-skin/"))
-        || !files.contains("resources/seed-map/axolotl-cubiomes.dll")
     {
         return Err("Portable archive is missing required program files".into());
     }
@@ -400,10 +399,6 @@ fn validate_journal(root: &Path, journal: &Journal) -> Result<PathBuf> {
     }
     let stage = root.join(&journal.stage);
     if !journal.items.iter().any(|item| item.path == HELPER)
-        || !journal
-            .items
-            .iter()
-            .any(|item| item.path == "resources/seed-map/axolotl-cubiomes.dll")
         || !journal
             .items
             .iter()
@@ -719,10 +714,6 @@ mod tests {
                 "Axolotl/resources/blockbench-skin/index.html",
                 b"new resources".as_slice(),
             ),
-            (
-                "Axolotl/resources/seed-map/axolotl-cubiomes.dll",
-                b"new native".as_slice(),
-            ),
         ]
         .into_iter()
         .chain(extra.iter().copied())
@@ -942,12 +933,6 @@ mod tests {
                     b"old resources"
                 },
                 "{point}"
-            );
-            assert_eq!(
-                root.path()
-                    .join("resources/seed-map/axolotl-cubiomes.dll")
-                    .exists(),
-                committed
             );
             assert!(!root.path().join(MARKER).exists());
             assert_user_data(root.path());

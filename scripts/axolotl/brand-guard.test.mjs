@@ -8,10 +8,7 @@ import { fileURLToPath } from 'node:url'
 
 const guard = fileURLToPath(new URL('./brand-guard.mjs', import.meta.url))
 
-async function runGuard(
-    permissions,
-    frontendConfig = 'Axolotl-Launcher/${version} (${os})\n',
-) {
+async function runGuard(permissions, frontendConfig = 'Axolotl-Launcher/${version} (${os})\n') {
     const directory = await mkdtemp(path.join(tmpdir(), 'axolotl-brand-guard-'))
     try {
         for (const relative of [
@@ -62,10 +59,7 @@ test('allows unrelated string and scoped object permissions', async () => {
 })
 
 test('rejects a configuration that turns GHS telemetry on', async () => {
-    const result = await runGuard(
-        [],
-        'Axolotl-Launcher/${version} (${os})\nghsTelemetry: true\n',
-    )
+    const result = await runGuard([], 'Axolotl-Launcher/${version} (${os})\nghsTelemetry: true\n')
     assert.equal(result.status, 1, result.stderr)
     assert.match(result.stderr, /GHS telemetry disabled/)
 })

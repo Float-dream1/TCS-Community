@@ -17,15 +17,6 @@ const SETTINGS_TABS = new Set<string>(
     getVisibleSettingsCategoryDefinitions(false).map((category) => category.id),
 )
 
-const LAB_TOOLS = new Set([
-    'skin-editor',
-    'gradient-text',
-    'recipe-generator',
-    'seed-map',
-    'schematic-preview',
-    'mod-translation',
-])
-
 function safeQuery(query: string | null | undefined): Record<string, string> {
     if (!query || !SAFE_QUERY.test(query)) return {}
     return Object.fromEntries(new URLSearchParams(query))
@@ -62,13 +53,6 @@ export function resolveOpenRoute(path: string, query?: string | null) {
         const id = path.slice('/instance/'.length).split('/')[0]
         const tail = path.slice(`/instance/${id}`.length)
         if (id && ['', '/files', '/files/studio', '/logs', '/worlds', '/upgrade'].includes(tail)) {
-            return route(path, query)
-        }
-        return null
-    }
-    if (path.startsWith('/lab')) {
-        const tail = path.slice('/lab'.length)
-        if (tail === '' || [...LAB_TOOLS].some((tool) => tail === `/${tool}`)) {
             return route(path, query)
         }
         return null

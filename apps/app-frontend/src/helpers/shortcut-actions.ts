@@ -13,7 +13,6 @@ export type ShortcutEnabledField =
     | 'shortcutNavWorlds'
     | 'shortcutNavDiscover'
     | 'shortcutNavLibrary'
-    | 'shortcutNavLab'
     | 'shortcutNavDownloads'
     | 'shortcutNavCreate'
     | 'shortcutNavSettings'
@@ -98,11 +97,6 @@ const messages = defineMessages({
     navLibraryDescription: {
         id: 'app.shortcut-settings.nav-library-description',
         defaultMessage: 'Jump to your library.',
-    },
-    navLab: { id: 'app.shortcut-settings.nav-lab', defaultMessage: 'Lab' },
-    navLabDescription: {
-        id: 'app.shortcut-settings.nav-lab-description',
-        defaultMessage: 'Jump to the Lab.',
     },
     navDownloads: { id: 'app.shortcut-settings.nav-downloads', defaultMessage: 'Downloads' },
     navDownloadsDescription: {
@@ -230,15 +224,6 @@ export const SHORTCUT_ACTIONS: ShortcutAction[] = [
         label: messages.navLibrary,
         description: messages.navLibraryDescription,
         target: () => '/library',
-    },
-    {
-        id: 'shortcutNavLab',
-        group: 'nav',
-        enabledField: 'shortcutNavLab',
-        defaultBinding: keyboard('Digit7', true),
-        label: messages.navLab,
-        description: messages.navLabDescription,
-        target: () => '/lab',
     },
     {
         id: 'shortcutNavDownloads',

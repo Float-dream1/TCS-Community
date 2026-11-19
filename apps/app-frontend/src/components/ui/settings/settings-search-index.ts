@@ -18,45 +18,6 @@ const message = (id: string, defaultMessage: string): MessageDescriptor => ({ id
 
 export const settingsSearchEntries: SettingsSearchEntry[] = [
     {
-        id: 'mcp-authentication',
-        categoryId: 'mcp',
-        targetId: 'settings-target-mcp-access',
-        label: message('app.mcp.require-auth', 'Require authentication'),
-        description: message(
-            'app.mcp.require-auth-description',
-            'Require clients to provide a connection token. Changing this setting disconnects the current session.',
-        ),
-    },
-    {
-        id: 'mcp-enabled',
-        categoryId: 'mcp',
-        targetId: 'settings-target-mcp-enabled',
-        label: message('app.mcp.enabled', 'Enable MCP'),
-    },
-    {
-        id: 'mcp-access',
-        categoryId: 'mcp',
-        targetId: 'settings-target-mcp-access',
-        label: message('app.mcp.full-access', 'Full access mode'),
-        description: message(
-            'app.mcp.full-access-description',
-            'Allow connections without approval, deletion tools, and direct control of the launcher interface.',
-        ),
-    },
-    {
-        id: 'mcp-clients',
-        categoryId: 'mcp',
-        targetId: 'settings-target-mcp-clients',
-        label: message('app.mcp.setup-title', 'Connect your AI client'),
-        keywords: [
-            defineMessage({
-                id: 'app.mcp.client-search',
-                defaultMessage:
-                    'MCP Model Context Protocol Codex Claude Code Cursor VS Code installation connection agent',
-            }),
-        ],
-    },
-    {
         id: 'network-tests',
         categoryId: 'network-connection',
         targetId: 'settings-target-network-tests',

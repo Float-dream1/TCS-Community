@@ -412,7 +412,6 @@ const messages = defineMessages({
     },
     navLibrary: { id: 'app.navigation.library', defaultMessage: 'Library' },
     navWorlds: { id: 'app.navigation.worlds', defaultMessage: 'Worlds' },
-    navLab: { id: 'app.navigation.lab', defaultMessage: 'Lab' },
     fontsTitle: { id: 'app.appearance-settings.fonts.title', defaultMessage: 'Fonts' },
     fontsDescription: {
         id: 'app.appearance-settings.fonts.description',
@@ -507,7 +506,6 @@ const NAV_TREE_ITEMS: NavTreeItem[] = [
     { id: 'discover', label: messages.navDiscover, group: 'browse' },
     { id: 'library', label: messages.navLibrary, group: 'play' },
     { id: 'worlds', label: messages.navWorlds, group: 'play' },
-    { id: 'lab', label: messages.navLab, group: 'tools' },
 ]
 
 const NAV_TREE_GROUPS = [

@@ -9,7 +9,15 @@
 
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
-import { isMain, loadPolicy, outputPaths, parseArgs, readJson, repoRoot, resolveOutputDir } from './sched-utils.mjs'
+import {
+    isMain,
+    loadPolicy,
+    outputPaths,
+    parseArgs,
+    readJson,
+    repoRoot,
+    resolveOutputDir,
+} from './sched-utils.mjs'
 
 export const LEVELS = ['L0', 'L1', 'L2', 'L3', 'L4']
 /** §8.1 business locks and the single-writer permit: holding one makes a task L3. */
@@ -22,7 +30,9 @@ export const PREDICATE_RESOURCES = [
 ]
 
 export function expectedGovernanceIds(policy) {
-    const resident = Array.from({ length: 30 }, (_, index) => `R${index + 1}`).filter((id) => !(id in policy.governanceRemoved))
+    const resident = Array.from({ length: 30 }, (_, index) => `R${index + 1}`).filter(
+        (id) => !(id in policy.governanceRemoved),
+    )
     // Production threads governed alongside the resident tasks.
     return [...resident, 'ACCENT', 'L0DRIVER']
 }
@@ -35,28 +45,56 @@ export function checkGovernance(policy, inventory) {
     for (const id of expected) if (!ids.includes(id)) failures.push(`${id} has no governance entry`)
     for (const id of ids) if (!expected.includes(id)) failures.push(`${id} is not a governed item`)
     for (const entry of policy.governance) {
-        if (!LEVELS.includes(entry.level)) failures.push(`${entry.id}: level ${entry.level} is not one of ${LEVELS.join('/')}`)
+        if (!LEVELS.includes(entry.level))
+            failures.push(`${entry.id}: level ${entry.level} is not one of ${LEVELS.join('/')}`)
         if (!entry.basis?.trim()) failures.push(`${entry.id}: no basis`)
-        if (!existsSync(path.resolve(repoRoot, entry.file))) failures.push(`${entry.id}: ${entry.file} does not exist`)
-        for (const ident of entry.locks) if (!generated.has(ident)) failures.push(`${entry.id}: lock ${ident} is not in the inventory`)
+        if (!existsSync(path.resolve(repoRoot, entry.file)))
+            failures.push(`${entry.id}: ${entry.file} does not exist`)
+        for (const ident of entry.locks)
+            if (!generated.has(ident))
+                failures.push(`${entry.id}: lock ${ident} is not in the inventory`)
         const predicate = entry.locks.some((ident) => PREDICATE_RESOURCES.includes(ident))
-        if (predicate && !['L3', 'L0'].includes(entry.level)) failures.push(`${entry.id}: holds a predicate lock but is ${entry.level}, not L3`)
+        if (predicate && !['L3', 'L0'].includes(entry.level))
+            failures.push(`${entry.id}: holds a predicate lock but is ${entry.level}, not L3`)
     }
     const telemetry = policy.governance.find((entry) => entry.id === 'R3')
-    if (!telemetry?.limitation?.startsWith('partial fix + declared limitation')) failures.push('R3 must stay recorded as a partial fix with a declared limitation')
+    if (!telemetry?.limitation?.startsWith('partial fix + declared limitation'))
+        failures.push('R3 must stay recorded as a partial fix with a declared limitation')
     const accent = policy.governance.find((entry) => entry.id === 'ACCENT')
-    if (accent && !(accent.level === 'L2' && accent.signal && accent.boundedExit && accent.form === 'production thread')) failures.push('ACCENT must be L2, a signal-driven production thread with a bounded exit')
+    if (
+        accent &&
+        !(
+            accent.level === 'L2' &&
+            accent.signal &&
+            accent.boundedExit &&
+            accent.form === 'production thread'
+        )
+    )
+        failures.push('ACCENT must be L2, a signal-driven production thread with a bounded exit')
     const driver = policy.governance.find((entry) => entry.id === 'L0DRIVER')
-    if (driver && !(driver.level === 'L0' && driver.signal && driver.boundedExit && driver.form === 'production thread')) failures.push('L0DRIVER must be L0, a signal-driven production thread with a bounded exit')
+    if (
+        driver &&
+        !(
+            driver.level === 'L0' &&
+            driver.signal &&
+            driver.boundedExit &&
+            driver.form === 'production thread'
+        )
+    )
+        failures.push('L0DRIVER must be L0, a signal-driven production thread with a bounded exit')
     const threads = policy.governance.filter((entry) => entry.form === 'production thread')
-    if (threads.length !== 2) failures.push(`the governance table must record exactly 2 production threads (K3.7), found ${threads.length}`)
+    if (threads.length !== 2)
+        failures.push(
+            `the governance table must record exactly 2 production threads (K3.7), found ${threads.length}`,
+        )
     return failures
 }
 
 function renderReport(policy) {
     const done = policy.governance.filter((entry) => entry.backfilled)
     const kept = policy.governance.filter((entry) => !entry.backfilled)
-    const row = (entry) => `| ${entry.id} | \`${entry.file}\` | ${entry.business} | ${entry.level}${entry.backfilled ? '' : ' (conservative)'} | ${entry.locks.map((ident) => `\`${ident}\``).join('<br>') || '—'} | ${entry.basis}${entry.limitation ? `<br>**${entry.limitation}**` : ''} |`
+    const row = (entry) =>
+        `| ${entry.id} | \`${entry.file}\` | ${entry.business} | ${entry.level}${entry.backfilled ? '' : ' (conservative)'} | ${entry.locks.map((ident) => `\`${ident}\``).join('<br>') || '—'} | ${entry.basis}${entry.limitation ? `<br>**${entry.limitation}**` : ''} |`
     return [
         '# Scheduler level-predicate backfill (T0.5)',
         '',
@@ -81,9 +119,14 @@ function renderGovernance(policy) {
         '',
         '| ID | Business | 形态 | Level | Signal-driven | Bounded exit |',
         '| --- | --- | --- | --- | --- | --- |',
-        ...policy.governance.map((entry) => `| ${entry.id} | ${entry.business} | ${entry.form === 'production thread' ? '生产线程' : '常驻任务'} | ${entry.level} | ${entry.signal ? 'yes' : '—'} | ${entry.boundedExit ? 'yes' : '—'} |`),
+        ...policy.governance.map(
+            (entry) =>
+                `| ${entry.id} | ${entry.business} | ${entry.form === 'production thread' ? '生产线程' : '常驻任务'} | ${entry.level} | ${entry.signal ? 'yes' : '—'} | ${entry.boundedExit ? 'yes' : '—'} |`,
+        ),
         '',
-        `Removed from the t12 list: ${Object.entries(policy.governanceRemoved).map(([id, reason]) => `${id} (${reason})`).join('; ')}.`,
+        `Removed from the t12 list: ${Object.entries(policy.governanceRemoved)
+            .map(([id, reason]) => `${id} (${reason})`)
+            .join('; ')}.`,
         '',
     ].join('\n')
 }
@@ -94,7 +137,9 @@ if (isMain(import.meta.url)) {
     const outDir = resolveOutputDir(args.dir)
     const failures = checkGovernance(policy, readJson(outputPaths(outDir).inventory))
     const kept = policy.governance.filter((entry) => !entry.backfilled).length
-    console.log(`governed items: ${policy.governance.length}; backfilled ${policy.governance.length - kept}, not backfilled ${kept}`)
+    console.log(
+        `governed items: ${policy.governance.length}; backfilled ${policy.governance.length - kept}, not backfilled ${kept}`,
+    )
     if (args.write) {
         mkdirSync(outDir, { recursive: true })
         writeFileSync(path.join(outDir, 'sched-level-predicate-report.md'), renderReport(policy))

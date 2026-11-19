@@ -16,9 +16,13 @@ export function enterBanViolations(sources) {
     for (const source of sources) {
         const { code, starts, rel } = source
         if (rel === CRITICAL_SECTION) {
-            for (const match of code.matchAll(/\bfn\s+enter\s*\(/g)) violations.push(`${rel}:${lineOf(starts, match.index)} rule 7: fn enter is back`)
+            for (const match of code.matchAll(/\bfn\s+enter\s*\(/g))
+                violations.push(`${rel}:${lineOf(starts, match.index)} rule 7: fn enter is back`)
         }
-        for (const match of code.matchAll(/critical_section::enter\s*\(/g)) violations.push(`${rel}:${lineOf(starts, match.index)} rule 7: critical_section::enter( call`)
+        for (const match of code.matchAll(/critical_section::enter\s*\(/g))
+            violations.push(
+                `${rel}:${lineOf(starts, match.index)} rule 7: critical_section::enter( call`,
+            )
         for (const match of code.matchAll(/\bmatch\s+([^{;]*?)\{/g)) {
             if (!/\bGate\b|\benter\s*\(/.test(match[1])) continue
             const open = match.index + match[0].length - 1
@@ -26,10 +30,16 @@ export function enterBanViolations(sources) {
             let depth = 0
             for (let i = 0; i < body.length; i++) {
                 const ch = body[i]
-                if ('{([' .includes(ch)) depth++
+                if ('{(['.includes(ch)) depth++
                 else if ('})]'.includes(ch)) depth--
-                else if (depth === 0 && /(^|[\s,|])_\s*=>/.test(body.slice(Math.max(0, i - 1), i + 4)) && ch === '_') {
-                    violations.push(`${rel}:${lineOf(starts, open + 1 + i)} rule 8: wildcard arm in a match on ${match[1].trim()}`)
+                else if (
+                    depth === 0 &&
+                    /(^|[\s,|])_\s*=>/.test(body.slice(Math.max(0, i - 1), i + 4)) &&
+                    ch === '_'
+                ) {
+                    violations.push(
+                        `${rel}:${lineOf(starts, open + 1 + i)} rule 8: wildcard arm in a match on ${match[1].trim()}`,
+                    )
                 }
             }
         }
@@ -43,5 +53,7 @@ if (isMain(import.meta.url)) {
         for (const violation of violations) console.error(violation)
         process.exit(1)
     }
-    console.log('rules 7 and 8 (auxiliary text checks): no enter() gate and no wildcard arm over one')
+    console.log(
+        'rules 7 and 8 (auxiliary text checks): no enter() gate and no wildcard arm over one',
+    )
 }

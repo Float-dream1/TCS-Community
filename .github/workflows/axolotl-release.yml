@@ -77,8 +77,6 @@ jobs:
           node scripts/axolotl/check-migrations.mjs --release
           node scripts/axolotl/brand-guard.mjs
           node scripts/axolotl/i18n-check.mjs
-          node --test scripts/axolotl/create-release-notes.test.mjs
-          node --test scripts/axolotl/publish-discord-release.test.mjs
           cargo fmt --all --check
 
       - name: Prepare draft release
@@ -87,7 +85,13 @@ jobs:
         run: |
           node --input-type=module -e 'import { releaseVersion } from "./scripts/axolotl/release-utils.mjs"; releaseVersion(process.env.RELEASE_TAG)'
           release_notes="${RUNNER_TEMP}/axolotl-release-notes.md"
-          node scripts/axolotl/create-release-notes.mjs "${RELEASE_TAG}" "$release_notes"
+          {
+            echo "## Changes"
+            echo
+            git log --no-merges --pretty='- %s' "${RELEASE_TAG}^..HEAD" || git log --no-merges --pretty='- %s' -20
+            echo
+            echo "Full changelog: https://github.com/${GITHUB_REPOSITORY}/compare/${RELEASE_TAG}...HEAD"
+          } > "$release_notes"
           if existing_draft="$(gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --json isDraft --jq .isDraft)"; then
             if [[ "$existing_draft" != true ]]; then
               echo '::error::Release is already public. Use workflow_dispatch to resume publication without rebuilding.'
@@ -377,10 +381,6 @@ jobs:
               release-check/release.json \
               website-publish/apps/website/releases/latest.json
           fi
-
-          node scripts/axolotl/create-website-release-catalog.mjs \
-            website-publish/apps/website/releases/catalog.json \
-            website-publish/apps/app-frontend/src/announcements/catalog.ts
 
       - name: Install website dependencies
         working-directory: website-publish

@@ -29,12 +29,10 @@ mod executable_install;
 mod exit_barrier;
 mod forum_consent;
 mod lightweight_mode;
-mod mod_translation;
 mod portable;
 #[cfg(windows)]
 #[path = "../../installer-ui/src/portable_update.rs"]
 mod portable_update;
-mod seed_map;
 mod window_frame;
 
 #[derive(Serialize)]
@@ -224,7 +222,6 @@ async fn initialize_state(app: tauri::AppHandle) -> api::Result<()> {
     tracing::info!("Initializing app state...");
     State::init(app.config().identifier.clone()).await?;
     api::resources::initialize_content_refresh_events(&app).await?;
-    api::mcp::initialize(&app).await;
     let anti_piracy_app = app.clone();
     tauri::async_runtime::spawn(async move {
         let status = theseus::anti_piracy::check_region().await;
@@ -685,7 +682,6 @@ fn run_exit_steps(app: &tauri::AppHandle) {
                     "Failed to stop multiplayer services before exit: {error}"
                 );
             }
-            api::mcp::shutdown(app).await;
         };
         if tokio::time::timeout(exit_barrier::SOFT_WINDOW, services)
             .await
@@ -1073,15 +1069,11 @@ fn main() {
         .plugin(api::metadata::init())
         .plugin(api::mcarchive::init())
         .plugin(api::minecraft_skins::init())
-        .plugin(api::mod_translation::init())
         .plugin(api::process::init())
         .plugin(api::planet_minecraft::init())
         .plugin(api::settings::init())
-        .plugin(api::mcp::init())
         .plugin(api::storage::init())
         .plugin(api::system_accent::init())
-        .plugin(api::seed_map::init())
-        .plugin(api::schematic_preview::init())
         .plugin(api::shortcuts::init())
         .plugin(api::tags::init())
         .plugin(api::telemetry::init())
