@@ -125,7 +125,7 @@ pnpm build
 cargo build --release --features custom-protocol
 ```
 
-产物是 `target\release\theseus_gui.exe`。运行前要把 `apps\app\resources\`（含 `blockbench-skin`）拷成 exe 同级的 `resources` 目录，否则种子地图和皮肤编辑器的资源会缺失。
+产物是 `target\release\theseus_gui.exe`。运行前要把 `apps\app\resources\`（含 `blockbench-skin`）拷成 exe 同级的 `resources` 目录，否则皮肤编辑器的资源会缺失。
 
 首次编译时 `build.rs` 会自己 `npm ci` 并构建皮肤编辑器资源，需要联网和 `PATH` 里的 node。临时跳过可以设 `AXOLOTL_SKIP_BLOCKBENCH_BUILD=1`，但跳过之后打包会因为缺少 `resources/blockbench-skin` 直接失败，只适合改 Rust 逻辑时的快速迭代。
 
