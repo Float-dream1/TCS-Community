@@ -266,8 +266,11 @@ onMounted(focusHeading)
     width: 60vmax;
     height: 60vmax;
     border-radius: 50%;
-    filter: blur(80px);
+    // The gradient is already soft; a huge blur here re-blurs a 60vmax disc on
+    // every animation frame, which is the most expensive thing in the launcher.
+    filter: blur(24px);
     opacity: 0.55;
+    will-change: transform;
     animation: oobe-drift 24s ease-in-out infinite alternate;
 }
 

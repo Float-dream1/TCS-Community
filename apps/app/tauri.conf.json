@@ -92,7 +92,7 @@
         "zoomHotkeysEnabled": false,
         "decorations": false,
         "transparent": true,
-        "additionalBrowserArgs": "--disable-features=msWebOOUI,msPdfOOUI,msSmartScreenProtection --enable-gpu-rasterization --enable-zero-copy --ignore-gpu-blocklist --enable-features=CanvasOopRasterization"
+        "additionalBrowserArgs": "--disable-features=msWebOOUI,msPdfOOUI,msSmartScreenProtection,CalculateNativeWinOcclusion --enable-gpu-rasterization --enable-zero-copy"
       }
     ],
     "security": {
