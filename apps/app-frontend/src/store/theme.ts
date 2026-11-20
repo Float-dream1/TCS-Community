@@ -243,9 +243,6 @@ export type ThemeStore = {
     uiFont: string | null
     /** Installed family replacing the monospace stack; null follows the default. */
     monoFont: string | null
-    transparentBackground: boolean
-    transparentBackgroundOpacity: number
-    transparentBackgroundBlur: boolean
     homeWidgetBackgroundOpacity: number
     hiddenNavItems: string[]
     sidebarInstanceCount: number
@@ -293,9 +290,6 @@ export const DEFAULT_THEME_STORE: ThemeStore = {
     customBackgroundComponentOpacity: 100,
     uiFont: null,
     monoFont: null,
-    transparentBackground: false,
-    transparentBackgroundOpacity: 55,
-    transparentBackgroundBlur: false,
     homeWidgetBackgroundOpacity: 100,
     hiddenNavItems: [],
     sidebarInstanceCount: 0,
@@ -402,19 +396,6 @@ export const useTheming = defineStore('themeStore', {
             html.classList.add(`${theme}-mode`)
         },
         /**
-         * Applies the transparent window mode to the root element. The palette
-         * lives on `body` in `global.scss`; this only supplies the toggle and the
-         * alpha every translucent surface is derived from.
-         */
-        setTransparentBackgroundClass() {
-            const html = document.documentElement
-            html.classList.toggle('transparent-window', this.transparentBackground)
-            html.style.setProperty(
-                '--transparent-window-alpha',
-                `${Math.min(Math.max(this.transparentBackgroundOpacity, 0), 100)}%`,
-            )
-        },
-        /**
          * Publishes the Home widget opacity both as a percentage (for
          * `color-mix()`) and as a 0-1 number (for lengths such as the blur
          * radius). `home-widget.css` derives every widget surface from these.
@@ -428,15 +409,11 @@ export const useTheming = defineStore('themeStore', {
         /**
          * The translucent palette for the custom-background mode lives on `body`
          * in `global.scss`; this supplies the toggle and the alpha it derives
-         * every surface from. The image and the transparent window are mutually
-         * exclusive, so the class follows the same condition the shell uses.
+         * every surface from.
          */
         setCustomBackgroundClass() {
             const html = document.documentElement
-            html.classList.toggle(
-                'has-custom-background',
-                !!this.customBackgroundPath && !this.transparentBackground,
-            )
+            html.classList.toggle('has-custom-background', !!this.customBackgroundPath)
         },
         /**
          * Publishes the two opacity settings for the custom-background palette in

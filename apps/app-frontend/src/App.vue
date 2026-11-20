@@ -320,9 +320,7 @@ const sidebarVisible = computed(
         (sidebarToggled.value || forceSidebar.value),
 )
 const customBackgroundStyle = computed(() => {
-    // A custom image would sit between the desktop and the UI, defeating the
-    // transparent window entirely, so the two are mutually exclusive.
-    if (themeStore.transparentBackground || !themeStore.customBackgroundPath) return undefined
+    if (!themeStore.customBackgroundPath) return undefined
 
     return {
         backgroundImage: `url("${convertFileSrc(themeStore.customBackgroundPath)}")`,
@@ -448,19 +446,13 @@ const windowAppearance = createWindowAppearanceController(
 function applyWindowAppearance() {
     return windowAppearance.update({
         os: os.value,
-        transparent: themeStore.transparentBackground,
-        blur: themeStore.transparentBackgroundBlur,
         decorated: nativeDecorations.value,
         maximized: isMaximized.value,
     })
 }
 
 watch(
-    () => [
-        themeStore.transparentBackground,
-        themeStore.transparentBackgroundBlur,
-        nativeDecorations.value,
-    ],
+    () => [nativeDecorations.value],
     () => {
         if (appearanceReady.value) void applyWindowAppearance()
     },
@@ -1232,10 +1224,6 @@ async function applyThemeFromSettings(s: Awaited<ReturnType<typeof getSettings>>
     themeStore.monoFont = s.mono_font ?? null
     themeStore.setUiFont()
     themeStore.setMonoFont()
-    themeStore.transparentBackground = s.transparent_background
-    themeStore.transparentBackgroundOpacity = s.transparent_background_opacity
-    themeStore.transparentBackgroundBlur = s.transparent_background_blur
-    themeStore.setTransparentBackgroundClass()
     themeStore.setCustomBackgroundClass()
     await applyThemeRuntimeFromSettings(s)
 }
@@ -1267,9 +1255,6 @@ async function setupApp() {
         custom_background_component_opacity,
         ui_font,
         mono_font,
-        transparent_background,
-        transparent_background_opacity,
-        transparent_background_blur,
         home_widget_background_opacity,
         hidden_nav_items,
         sidebar_instance_count,
@@ -1334,10 +1319,6 @@ async function setupApp() {
     themeStore.monoFont = mono_font ?? null
     themeStore.setUiFont()
     themeStore.setMonoFont()
-    themeStore.transparentBackground = transparent_background
-    themeStore.transparentBackgroundOpacity = transparent_background_opacity
-    themeStore.transparentBackgroundBlur = transparent_background_blur
-    themeStore.setTransparentBackgroundClass()
     themeStore.setCustomBackgroundClass()
     await applyThemeRuntimeFromSettings(initialSettings)
     await refreshThemePackPages()
@@ -2698,12 +2679,7 @@ provideAppUpdateDownloadProgress(appUpdateDownload)
         </button>
     </div>
     <div id="teleports"></div>
-    <div
-        v-if="
-            stateInitialized && themeStore.customBackgroundPath && !themeStore.transparentBackground
-        "
-        class="launcher-background"
-    >
+    <div v-if="stateInitialized && themeStore.customBackgroundPath" class="launcher-background">
         <div class="launcher-background-image" :style="customBackgroundStyle" />
     </div>
     <div
@@ -2713,9 +2689,7 @@ provideAppUpdateDownloadProgress(appUpdateDownload)
         :class="{
             invisible: oobeVisible,
             'disable-advanced-rendering': !themeStore.advancedRendering,
-            'has-custom-background':
-                themeStore.customBackgroundPath && !themeStore.transparentBackground,
-            'has-transparent-background': themeStore.transparentBackground,
+            'has-custom-background': !!themeStore.customBackgroundPath,
             'is-maximized': isMaximized,
             'has-native-decorations': nativeDecorations,
             'has-css-window-border': cssWindowBorder,
@@ -2870,9 +2844,7 @@ provideAppUpdateDownloadProgress(appUpdateDownload)
             'sidebar-enabled': sidebarVisible,
             'studio-mode': route.name === 'FileStudio',
             'disable-advanced-rendering': !themeStore.advancedRendering,
-            'has-custom-background':
-                themeStore.customBackgroundPath && !themeStore.transparentBackground,
-            'has-transparent-background': themeStore.transparentBackground,
+            'has-custom-background': !!themeStore.customBackgroundPath,
         }"
     >
         <div class="app-viewport flex-grow router-view" tabindex="-1">

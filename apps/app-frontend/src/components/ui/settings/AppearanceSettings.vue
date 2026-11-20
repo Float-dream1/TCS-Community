@@ -171,36 +171,6 @@ const messages = defineMessages({
         defaultMessage:
             'Choose or drop a custom image, then fine-tune how it blends with the launcher interface.',
     },
-    transparentBackgroundTitle: {
-        id: 'app.appearance-settings.transparent-background.title',
-        defaultMessage: 'Transparent background',
-    },
-    transparentBackgroundDescription: {
-        id: 'app.appearance-settings.transparent-background.description',
-        defaultMessage: 'Let your desktop show through the launcher window.',
-    },
-    transparentBackgroundOpacity: {
-        id: 'app.appearance-settings.transparent-background.opacity',
-        defaultMessage: 'Interface opacity',
-    },
-    transparentBackgroundOpacityDescription: {
-        id: 'app.appearance-settings.transparent-background.opacity-description',
-        defaultMessage:
-            'Lower values show more of your desktop. Panels stay more solid than the background to keep text readable.',
-    },
-    transparentBackgroundBlurTitle: {
-        id: 'app.appearance-settings.transparent-background.blur-title',
-        defaultMessage: 'Background blur',
-    },
-    transparentBackgroundBlurDescription: {
-        id: 'app.appearance-settings.transparent-background.blur-description',
-        defaultMessage:
-            'Frost what shows through the window. Dragging or resizing may feel less smooth while this is on.',
-    },
-    transparentBackgroundConflict: {
-        id: 'app.appearance-settings.transparent-background.conflict',
-        defaultMessage: 'Your custom background image is hidden while this is enabled.',
-    },
     advancedRenderingTitle: {
         id: 'app.appearance-settings.advanced-rendering.title',
         defaultMessage: 'Advanced rendering',
@@ -685,9 +655,6 @@ watch(
             settings.value.custom_background_blur,
             settings.value.custom_background_opacity,
             settings.value.custom_background_component_opacity,
-            settings.value.transparent_background,
-            settings.value.transparent_background_opacity,
-            settings.value.transparent_background_blur,
             settings.value.home_widget_background_opacity,
             settings.value.hidden_nav_items,
             settings.value.sidebar_instance_count,
@@ -700,9 +667,6 @@ watch(
         blur,
         opacity,
         componentOpacity,
-        transparent,
-        transparentOpacity,
-        transparentBlur,
         homeWidgetBackgroundOpacity,
         hiddenNavItems,
         sidebarInstanceCount,
@@ -715,10 +679,6 @@ watch(
         themeStore.customBackgroundOpacity = opacity
         themeStore.customBackgroundComponentOpacity = componentOpacity ?? 100
         themeStore.setCustomBackgroundOpacity()
-        themeStore.transparentBackground = transparent
-        themeStore.transparentBackgroundOpacity = transparentOpacity
-        themeStore.transparentBackgroundBlur = transparentBlur
-        themeStore.setTransparentBackgroundClass()
         themeStore.setCustomBackgroundClass()
         themeStore.homeWidgetBackgroundOpacity = homeWidgetBackgroundOpacity
         themeStore.setHomeWidgetBackgroundOpacity()
@@ -937,81 +897,6 @@ watch(
                 </p>
             </template>
             <LauncherBackgroundSettings v-model:settings="settings" />
-            <SettingsRow>
-                <template #label>
-                    <span id="settings-target-appearance-transparent-background" tabindex="-1">
-                        {{ formatMessage(messages.transparentBackgroundTitle) }}
-                    </span>
-                </template>
-                <template #description>
-                    <span class="block">{{
-                        formatMessage(messages.transparentBackgroundDescription)
-                    }}</span>
-                    <span v-if="settings.custom_background_path" class="mt-1 block text-orange">
-                        {{ formatMessage(messages.transparentBackgroundConflict) }}
-                    </span>
-                </template>
-                <template #copy>
-                    <PinnedOverrideHint
-                        key-name="transparent_background"
-                        @cleared="reloadSettings"
-                    />
-                </template>
-                <template #control>
-                    <Toggle
-                        id="transparent-background"
-                        :model-value="settings.transparent_background"
-                        @update:model-value="(e) => (settings.transparent_background = !!e)"
-                    />
-                </template>
-            </SettingsRow>
-            <SettingsRow v-if="settings.transparent_background" stacked>
-                <template #label>{{
-                    formatMessage(messages.transparentBackgroundOpacity)
-                }}</template>
-                <template #description>
-                    {{ formatMessage(messages.transparentBackgroundOpacityDescription) }}
-                </template>
-                <template #copy>
-                    <PinnedOverrideHint
-                        key-name="transparent_background_opacity"
-                        @cleared="reloadSettings"
-                    />
-                </template>
-                <template #control>
-                    <div class="w-full">
-                        <Slider
-                            id="transparent-background-opacity"
-                            v-model="settings.transparent_background_opacity"
-                            :min="0"
-                            :max="100"
-                            :step="5"
-                            unit="%"
-                        />
-                    </div>
-                </template>
-            </SettingsRow>
-            <SettingsRow v-if="settings.transparent_background && os !== 'Linux'">
-                <template #label>{{
-                    formatMessage(messages.transparentBackgroundBlurTitle)
-                }}</template>
-                <template #description>
-                    {{ formatMessage(messages.transparentBackgroundBlurDescription) }}
-                </template>
-                <template #copy>
-                    <PinnedOverrideHint
-                        key-name="transparent_background_blur"
-                        @cleared="reloadSettings"
-                    />
-                </template>
-                <template #control>
-                    <Toggle
-                        id="transparent-background-blur"
-                        :model-value="settings.transparent_background_blur"
-                        @update:model-value="(e) => (settings.transparent_background_blur = !!e)"
-                    />
-                </template>
-            </SettingsRow>
         </SettingsSection>
 
         <SettingsSection v-if="props.scope === 'interface'">

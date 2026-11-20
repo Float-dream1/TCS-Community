@@ -77,19 +77,6 @@ export const settingsSearchEntries: SettingsSearchEntry[] = [
         ),
     },
     {
-        id: 'appearance-transparent-background',
-        categoryId: 'interface',
-        targetId: 'settings-target-appearance-transparent-background',
-        label: message(
-            'app.appearance-settings.transparent-background.title',
-            'Transparent background',
-        ),
-        description: message(
-            'app.appearance-settings.transparent-background.description',
-            'Let your desktop show through the launcher window.',
-        ),
-    },
-    {
         id: 'appearance-advanced-rendering',
         categoryId: 'interface',
         targetId: 'settings-target-appearance-advanced-rendering',

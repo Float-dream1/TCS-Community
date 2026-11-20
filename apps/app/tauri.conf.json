@@ -91,7 +91,7 @@
         "visible": false,
         "zoomHotkeysEnabled": false,
         "decorations": false,
-        "transparent": true,
+        "transparent": false,
         "additionalBrowserArgs": "--disable-features=msWebOOUI,msPdfOOUI,msSmartScreenProtection,CalculateNativeWinOcclusion --enable-gpu-rasterization --enable-zero-copy"
       }
     ],
